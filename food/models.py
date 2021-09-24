@@ -9,8 +9,8 @@ from django.db.models import Sum
 
 
 class FoodCategory(models.Model):
-  name = models.CharField(max_length=255)
-  description = models.CharField(null=True, blank=True, max_length=1000)
+  name = models.TextField(null=False, blank=False)
+  description = models.TextField(null=False, blank=False)
   image =  models.ImageField(upload_to='uploads/',null=True, blank=True)
 
 
@@ -20,8 +20,8 @@ class FoodCategory(models.Model):
 
 
 class FoodType(models.Model):
-  name = models.CharField(max_length=255)
-  description = models.CharField(null=True, blank=True, max_length=1000)
+  name = models.TextField(null=False, blank=False)
+  description = models.TextField(null=False, blank=False)
   image = models.ImageField(upload_to='uploads/', null=True, blank=True)
   food_category = models.ForeignKey(FoodCategory , on_delete=models.CASCADE, null=True,
                      blank=True, related_name="food_category")
@@ -31,8 +31,8 @@ class FoodType(models.Model):
 
 
 class Food(models.Model):
-  name = models.CharField(max_length=255)
-  description = models.CharField(null=True,blank=True,max_length=1000)
+  name = models.TextField(null=False, blank=False)
+  description = models.TextField(null=False, blank=False)
   image =  models.ImageField(upload_to='uploads/',null=True, blank=True)
   price = models.DecimalField(decimal_places=2, max_digits=8, blank=True, null=True)
   is_vegetarian = models.BooleanField(default=False)
@@ -48,8 +48,8 @@ class Food(models.Model):
 
 
 class Ingredients(models.Model):
-  name = models.CharField(max_length=255)
-  description = models.CharField(null=True, blank=True, max_length=1000)
+  name = models.TextField(null=False, blank=False)
+  description = models.TextField(null=False, blank=False)
   image = models.ImageField(upload_to='uploads/', null=True, blank=True)
   calories = models.CharField(max_length=255, null=True, blank=True)
   weight =models.CharField(max_length=255, null=True, blank=True)
@@ -59,8 +59,8 @@ class Ingredients(models.Model):
 
 
 class PlateSection(models.Model):
-  name = models.CharField(max_length=255)
-  description = models.CharField(null=True, blank=True, max_length=1000)
+  name = models.TextField(null=False, blank=False)
+  description = models.TextField(null=False, blank=False)
   image = models.ImageField(upload_to='uploads/', null=True, blank=True)
   category = models.ManyToManyField(FoodCategory)
 
@@ -68,8 +68,8 @@ class PlateSection(models.Model):
     return self.name
 
 class PlateLayout(models.Model):
-  name = models.CharField(max_length=255)
-  description = models.CharField(null=True, blank=True, max_length=1000)
+  name = models.TextField(null=False, blank=False)
+  description = models.TextField(null=False, blank=False)
   image = models.ImageField(upload_to='uploads/', null=True, blank=True)
   sections = models.ManyToManyField(PlateSection, blank=True)
   # has_drink = models.BooleanField(default=False)
@@ -92,7 +92,7 @@ class SectionFood(models.Model):
 
 class Plate(models.Model):
   # name = models.CharField(max_length=255)
-  description = models.CharField(null=True, blank=True, max_length=1000)
+  description = models.TextField(null=False, blank=False)
   image = models.ImageField(upload_to='uploads/', null=True, blank=True)
   user = models.ForeignKey(User,null=True,blank=True,on_delete=CASCADE)
   layout = models.ForeignKey(PlateLayout, on_delete=models.CASCADE, null=True,
@@ -208,8 +208,8 @@ class Subscribe(models.Model):
 #   count = models.IntegerField(default=0)
 
 class Box(models.Model):
-  name = models.CharField(max_length=255)
-  description = models.CharField(null=True, blank=True, max_length=1000)
+  name = models.TextField(null=False, blank=False)
+  description = models.TextField(null=False, blank=False)
   image = models.ImageField(upload_to='uploads/', null=True, blank=True)
   user = models.ForeignKey(User,null=True,blank=True,on_delete=CASCADE)
   layout = models.ForeignKey(PlateLayout, on_delete=models.CASCADE, null=True,

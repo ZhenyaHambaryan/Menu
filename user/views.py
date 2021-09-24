@@ -529,6 +529,5 @@ def delete_org(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_me(request):
-
     return Response(UserSerializer(User.objects.get(id=request.user.id)).data,
                                     status=status.HTTP_200_OK)
