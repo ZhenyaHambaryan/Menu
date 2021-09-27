@@ -90,6 +90,10 @@ class SectionFood(models.Model):
   food = models.ForeignKey(Food, on_delete=models.CASCADE, null=True,
                      blank=True, related_name="foods")
 
+
+
+
+
 class Plate(models.Model):
   # name = models.CharField(max_length=255)
   description = models.TextField(null=False, blank=False)
@@ -97,15 +101,25 @@ class Plate(models.Model):
   user = models.ForeignKey(User,null=True,blank=True,on_delete=CASCADE)
   layout = models.ForeignKey(PlateLayout, on_delete=models.CASCADE, null=True,
                      blank=True, related_name="layout_plate")#DEBUG: redundant?
-  section_food = models.ManyToManyField(SectionFood, blank=True,related_name='plate_section_food')
-  # drink =  models.ManyToManyField(Food, blank=True, related_name="food_drink")
-  dessert =  models.ManyToManyField(Food, blank=True, related_name="food_dessert")
+  # section_food = models.ManyToManyField(SectionFood, blank=True,related_name='plate_section_food')
+  # drink =  models.ManyToManyField(PlateDrink, blank=True, related_name="plate_drink")
+  # dessert =  models.ManyToManyField(PlateDessert, blank=True, related_name="food_dessert")
 
 class PlateDrink(models.Model):
-  plate = models.ForeignKey(Plate, on_delete=models.CASCADE, null=True,
-                     blank=True, related_name="drink_plate")
-  drink =  models.ManyToManyField(Food, blank=True, related_name="plate_drink")
-  count = models.IntegerField(null=False, blank=False,default=0)
+  plate = models.ForeignKey(Plate, blank=True, on_delete=models.CASCADE, null=True, related_name="drink_plate")
+  drink = models.ForeignKey(Food, blank=True, on_delete=models.CASCADE, null=True, related_name="plate_drink")
+  count = models.IntegerField(null=False, blank=False, default=0)
+
+
+class PlateDessert(models.Model):
+  plate = models.ForeignKey(Plate, blank=True, on_delete=models.CASCADE, null=True, related_name="dessert_plate")
+  dessert = models.ForeignKey(Food, blank=True, on_delete=models.CASCADE, null=True, related_name="plate_dessert")
+  count = models.IntegerField(null=False, blank=False, default=0)
+
+class PlateSectionFood(models.Model):
+  plate = models.ForeignKey(Plate, blank=True, on_delete=models.CASCADE, null=True, related_name="section_food_plate")
+  section_food = models.ForeignKey(SectionFood, blank=True,on_delete=models.CASCADE, null=True, related_name='plate_section_food')
+  count = models.IntegerField(null=False, blank=False, default=0)
 
   # foods = models.ManyToManyField(Food, blank=True)
   # has_drink = models.BooleanField(default=True)
@@ -132,7 +146,21 @@ class Subscribe(models.Model):
   comment = models.CharField(null=True,blank=True,max_length=1000)
   # price = models.FloatField(null=True, blank=True, default=0.0)
   # @property
+
   # def price(self):
+  # food1 = self.plate.drink.aggregate(sum=Sum('price'))['sum']
+  # food2 = self.plate.dessert.aggregate(sum=Sum('price'))['sum']
+  # food3 = self.plate.section_food.all().aggregate(sum=Sum('food__price'))['sum']
+  # pr = 0
+  # # print(self.plate.drink.count())
+  # if food1 is not None:
+  #   pr = pr+food1
+  # if food2 is not None:
+  #   pr = pr +food2
+  # if food3 is not None:
+  #   pr = pr+food3
+  # return pr*self.day_count
+
   #   food1 = self.plate.drink.all()
   #   food2 = self.plate.dessert.all()
   #   food3 = self.plate.section_food.all()
@@ -159,18 +187,7 @@ class Subscribe(models.Model):
     # for i in food3:
     #   pr3 = i.aggregate(sum=Sum('food__price'))['sum'] * (self.day_count / self.plate.section_food.food.count())
     # return pr1+pr2+pr3
-    # food1 = self.plate.drink.aggregate(sum=Sum('price'))['sum']
-    # food2 = self.plate.dessert.aggregate(sum=Sum('price'))['sum']
-    # food3 = self.plate.section_food.all().aggregate(sum=Sum('food__price'))['sum']
-    # pr = 0
-    # # print(self.plate.drink.count())
-    # if food1 is not None:
-    #   pr = pr+food1
-    # if food2 is not None:
-    #   pr = pr +food2
-    # if food3 is not None:
-    #   pr = pr+food3
-    # return pr*self.day_count
+
 
     # if food1 is None and food2 and food3 is not None :
     #   return (food2+food3)*self.day_count

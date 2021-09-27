@@ -1,14 +1,12 @@
 from django.db.models import fields
-from food.models import Food, FoodType, FoodCategory, PlateSection, PlateLayout, Plate,Ingredients,Subscribe,SectionFood,Box,PlateDrink
+from food.models import Food, FoodType, FoodCategory, PlateSection, PlateLayout, Plate,Ingredients,Subscribe,\
+                        SectionFood,Box,PlateDrink,PlateDessert,PlateSectionFood
 from user.serializers import UserDetailSerializer
 from rest_framework import serializers
 from django.contrib.auth.models import User
 import sys,json
 
-class PlateDrinkSerializer(serializers.ModelSerializer):
-  class Meta:
-    model = PlateDrink
-    fields = '__all__'
+
 
 
 class FoodCategorySerializer(serializers.ModelSerializer):
@@ -144,12 +142,42 @@ class SectionFoodSerializer(serializers.ModelSerializer):
     fields = '__all__'
   def to_representation(self, instance):
     representation = super(SectionFoodSerializer,self).to_representation(instance)
-    representation["sections"] = PlateSectionSerializer(instance.sections).data
+    representation["section"] = PlateSectionSerializer(instance.section).data
     representation["food"] = FoodSerializer(instance.food).data
 
     return representation
 
 
+class PlateDrinkSerializer(serializers.ModelSerializer):
+  class Meta:
+    model = PlateDrink
+    fields = '__all__'
+  def to_representation(self, instance):
+    representation = super(PlateDrinkSerializer,self).to_representation(instance)
+    # representation["plate"] = PlateSerializer(instance.drink_plate).data
+    representation["drink"] = FoodSerializer(instance.drink).data
+
+    return representation
+
+class PlateDessertSerializer(serializers.ModelSerializer):
+  class Meta:
+    model = PlateDessert
+    fields = '__all__'
+  def to_representation(self, instance):
+    representation = super(PlateDessertSerializer,self).to_representation(instance)
+    representation["dessert"] = FoodSerializer(instance.dessert).data
+
+    return representation
+
+class PlateSectionFoodSerializer(serializers.ModelSerializer):
+  class Meta:
+    model = PlateSectionFood
+    fields = '__all__'
+  def to_representation(self, instance):
+    representation = super(PlateSectionFoodSerializer,self).to_representation(instance)
+    representation["section_food"] = SectionFoodSerializer(instance.section_food).data
+
+    return representation
 
 
 class PlateSerializer(serializers.ModelSerializer):
@@ -165,12 +193,33 @@ class PlateSerializer(serializers.ModelSerializer):
     # data['description'] = json.loads(instance.description)
     representation["layout"] = PlateLayoutSerializer(instance.layout).data
     representation["drink"] = PlateDrinkSerializer(instance.drink_plate,many=True).data
+    representation["dessert"] = PlateDessertSerializer(instance.dessert_plate,many=True).data
+    # representation["plate"] = PlateDrinkSerializer(instance.plate_drink).data
+    # representation["section_food"] = SectionFoodSerializer(instance.section_food,many=True).data
+
     try:
       representation['description'] = json.loads(instance.description)
     except:
       representation['description'] = None
-    representation["dessert"] = FoodSerializer(instance.dessert,many=True).data
     return representation
+
+
+class SubscribeSerializer(serializers.ModelSerializer):
+  # plate = PlateSerializer()
+  class Meta:
+    model = Subscribe
+    fields = '__all__'
+
+  def to_representation(self, instance):
+    representation = super(SubscribeSerializer,self).to_representation(instance)
+    representation["plate"] = PlateSerializer(instance.plate).data
+    # representation["section_food"] = SectionFoodSerializer(instance.section_food).data
+
+    # representation["price"] = instance.price
+    return representation
+
+
+
 
 
 
@@ -197,17 +246,4 @@ class BoxSerializer(serializers.ModelSerializer):
     return representation
 
 
-
-
-class SubscribeSerializer(serializers.ModelSerializer):
-  # plate = PlateSerializer()
-  class Meta:
-    model = Subscribe
-    fields = '__all__'
-
-  def to_representation(self, instance):
-    representation = super(SubscribeSerializer,self).to_representation(instance)
-    representation["plate"] = PlateSerializer(instance.plate).data
-    # representation["price"] = instance.price
-    return representation
 

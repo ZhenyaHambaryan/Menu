@@ -7,18 +7,27 @@ from rest_framework import viewsets, status
 from rest_framework.authtoken.models import Token
 from rest_framework.reverse import reverse
 from food.serializers import FoodSerializer, FoodTypeSerializer, FoodCategorySerializer, PlateSectionSerializer, \
-                                  PlateLayoutSerializer, PlateSerializer,IngredientsSerializer,SubscribeSerializer,SectionFoodSerializer,BoxSerializer,PlateDrinkSerializer
-from food.models import Food, FoodType, FoodCategory, PlateSection, PlateLayout, Plate,Ingredients,Subscribe,SectionFood,Box,PlateDrink
+                              PlateLayoutSerializer, PlateSerializer,IngredientsSerializer,SubscribeSerializer,\
+                              SectionFoodSerializer,BoxSerializer,PlateDrinkSerializer,PlateDessertSerializer,PlateSectionFoodSerializer
+from food.models import Food, FoodType, FoodCategory, PlateSection, PlateLayout, Plate,Ingredients,Subscribe,\
+                        SectionFood,Box,PlateDrink,PlateDessert,PlateSectionFood
 # import django_filters
 from rest_framework.filters import SearchFilter
 from django_filters import rest_framework as filters
 from rest_framework.pagination import PageNumberPagination
+
+class PlateSectionFoodViewSet(viewsets.ModelViewSet):
+  queryset = PlateSectionFood.objects.all()
+  serializer_class = PlateSectionFoodSerializer
 
 
 class PlateDrinkViewSet(viewsets.ModelViewSet):
   queryset = PlateDrink.objects.all()
   serializer_class = PlateDrinkSerializer
 
+class PlateDessertViewSet(viewsets.ModelViewSet):
+  queryset = PlateDessert.objects.all()
+  serializer_class = PlateDessertSerializer
 
 class BoxViewSet(viewsets.ModelViewSet):
   queryset = Box.objects.all()
@@ -79,7 +88,7 @@ class PlateViewSet(viewsets.ModelViewSet):
   queryset = Plate.objects.all()
   serializer_class = PlateSerializer
   filter_backends = [filters.DjangoFilterBackend, SearchFilter]
-  filter_fields = ['layout','dessert',]
+  filter_fields = ['layout',]
 
 
 class PlateLayoutViewSet(viewsets.ModelViewSet):

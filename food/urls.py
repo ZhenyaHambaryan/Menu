@@ -2,8 +2,34 @@ from django.urls import path
 from rest_framework import urlpatterns, viewsets
 from rest_framework.urlpatterns import format_suffix_patterns
 from .views import FoodViewSet, FoodTypeViewSet, FoodCategoryViewSet, PlateSectionViewSet, PlateLayoutViewSet, PlateViewSet,\
-                                IngredientsViewSet,SubscribeViewSet,SectionFoodViewSet,BoxViewSet,PlateDrinkViewSet
+                                IngredientsViewSet,SubscribeViewSet,SectionFoodViewSet,BoxViewSet,PlateDrinkViewSet,PlateDessertViewSet,PlateSectionFoodViewSet
 from food import views
+
+
+plate_section_food_list = PlateSectionFoodViewSet.as_view({
+    'get': 'list',
+    'post': 'create'
+})
+
+plate_section_food_detail = PlateSectionFoodViewSet.as_view({
+    'get': 'retrieve',
+    'put': 'update',
+    'patch': 'partial_update',
+    'delete': 'destroy'
+})
+
+
+plate_dessert_list = PlateDessertViewSet.as_view({
+    'get': 'list',
+    'post': 'create'
+})
+
+plate_dessert_detail = PlateDessertViewSet.as_view({
+    'get': 'retrieve',
+    'put': 'update',
+    'patch': 'partial_update',
+    'delete': 'destroy'
+})
 
 plate_drink_list = PlateDrinkViewSet.as_view({
     'get': 'list',
@@ -169,7 +195,10 @@ urlpatterns = [
     path('box/<int:pk>/', box_detail, name='box-detail'),
     path('plate_drink/', plate_drink_list, name='plate_drink-list'),
     path('plate_drink/<int:pk>/', plate_drink_detail, name='plate_drink-detail'),
-
+    path('plate_dessert/', plate_dessert_list, name='plate_dessert-list'),
+    path('plate_dessert/<int:pk>/', plate_dessert_detail, name='plate_dessert-detail'),
+    path('plate_section_food/', plate_section_food_list, name='plate_section_food-list'),
+    path('plate_section_food/<int:pk>/', plate_section_food_detail, name='plate_section_food-detail'),
     # testing petk uni:
 
     path('add_fave_food', views.add_fave_food, name='add-fave-food'),
