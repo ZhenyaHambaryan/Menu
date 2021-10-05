@@ -13,16 +13,16 @@ class FoodCategorySerializer(serializers.ModelSerializer):
   class Meta:
     model = FoodCategory
     fields = '__all__'
-  # def to_representation(self, instance):
-  #   try:
-  #     representation['name'] = json.loads(instance.name)
-  #   except:
-  #     representation['name'] = None
-  #   try:
-  #     representation['description'] = json.loads(instance.description)
-  #   except:
-  #     representation['description'] = None
-  #   return representation
+  def to_representation(self, instance):
+    try:
+      representation['name'] = json.loads(instance.name)
+    except:
+      representation['name'] = None
+    try:
+      representation['description'] = json.loads(instance.description)
+    except:
+      representation['description'] = None
+    return representation
 
 
 class FoodTypeSerializer(serializers.ModelSerializer):
@@ -33,14 +33,14 @@ class FoodTypeSerializer(serializers.ModelSerializer):
   def to_representation(self, instance):
     representation = super(FoodTypeSerializer,self).to_representation(instance)
     representation["food_category"] = FoodCategorySerializer(instance.food_category).data
-    # try:
-    #   representation['name'] = json.loads(instance.name)
-    # except:
-    #   representation['name'] = None
-    # try:
-    #   representation['description'] = json.loads(instance.description)
-    # except:
-    #   representation['description'] = None
+    try:
+      representation['name'] = json.loads(instance.name)
+    except:
+      representation['name'] = None
+    try:
+      representation['description'] = json.loads(instance.description)
+    except:
+      representation['description'] = None
     return representation
 
 
@@ -51,15 +51,15 @@ class IngredientsSerializer(serializers.ModelSerializer):
 
   def to_representation(self, instance):
     representation = super(IngredientsSerializer,self).to_representation(instance)
-    # try:
-    #   representation['name'] = json.loads(instance.name)
-    # except:
-    #   representation['name'] = None
-    # # return representation
-    # try:
-    #   representation['description'] = json.loads(instance.description)
-    # except:
-    #   representation['description'] = None
+    try:
+      representation['name'] = json.loads(instance.name)
+    except:
+      representation['name'] = None
+    # return representation
+    try:
+      representation['description'] = json.loads(instance.description)
+    except:
+      representation['description'] = None
     return representation
     # try:
     #   representation['description'] = json.loads(instance.description)
@@ -77,14 +77,14 @@ class FoodSerializer(serializers.ModelSerializer):
     # data['name'] = json.loads(instance.name)
     # data['description'] = json.loads(instance.description)
     representation["food_type"] = FoodTypeSerializer(instance.food_type).data
-    # try:
-    #   representation['name'] = json.loads(instance.name)
-    # except:
-    #   representation['name'] = None
-    # try:
-    #   representation['description'] = json.loads(instance.description)
-    # except:
-    #   representation['description'] = None
+    try:
+      representation['name'] = json.loads(instance.name)
+    except:
+      representation['name'] = None
+    try:
+      representation['description'] = json.loads(instance.description)
+    except:
+      representation['description'] = None
     return representation
 
 
@@ -99,14 +99,14 @@ class PlateSectionSerializer(serializers.ModelSerializer):
     # data['name'] = json.loads(instance.name)
     # data['description'] = json.loads(instance.description)
     representation["category"] = FoodCategorySerializer(instance.category,many=True).data
-    # try:
-    #   representation['name'] = json.loads(instance.name)
-    # except:
-    #   representation['name'] = None
-    # try:
-    #   representation['description'] = json.loads(instance.description)
-    # except:
-    #   representation['description'] = None
+    try:
+      representation['name'] = json.loads(instance.name)
+    except:
+      representation['name'] = None
+    try:
+      representation['description'] = json.loads(instance.description)
+    except:
+      representation['description'] = None
     return representation
 
 
@@ -123,14 +123,14 @@ class PlateLayoutSerializer(serializers.ModelSerializer):
     # data['name'] = json.loads(instance.name)
     # data['description'] = json.loads(instance.description)
     representation["sections"] = PlateSectionSerializer(instance.sections,many=True).data
-    # try:
-    #   representation['name'] = json.loads(instance.name)
-    # except:
-    #   representation['name'] = None
-    # try:
-    #   representation['description'] = json.loads(instance.description)
-    # except:
-    #   representation['description'] = None
+    try:
+      representation['name'] = json.loads(instance.name)
+    except:
+      representation['name'] = None
+    try:
+      representation['description'] = json.loads(instance.description)
+    except:
+      representation['description'] = None
     return representation
 
 
@@ -238,14 +238,14 @@ class BoxSerializer(serializers.ModelSerializer):
     representation["layout"] = PlateLayoutSerializer(instance.layout).data
     # representation["drink"] = FoodSerializer(instance.drink,many=True).data
     representation["dessert"] = FoodSerializer(instance.dessert,many=True).data
-    # try:
-    #   representation['name'] = json.loads(instance.name)
-    # except:
-    #   representation['name'] = None
-    # try:
-    #   representation['description'] = json.loads(instance.description)
-    # except:
-    #   representation['description'] = None
+    try:
+      representation['name'] = json.loads(instance.name)
+    except:
+      representation['name'] = None
+    try:
+      representation['description'] = json.loads(instance.description)
+    except:
+      representation['description'] = None
     return representation
 
 
