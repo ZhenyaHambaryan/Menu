@@ -90,6 +90,24 @@ class PlateViewSet(viewsets.ModelViewSet):
   filter_backends = [filters.DjangoFilterBackend, SearchFilter]
   filter_fields = ['layout',]
 
+  def create(self, request, *args, **kwargs):
+    plate = Plate(description=request.data['description'],user_id=request.data['user_id'],
+                  layout_id=request.data['layout_id'])
+    plate.save()
+    price=0
+    for drink in request.data['drink']:
+      price+=drink['count']*drink['price']
+      PlateDrink(plate_id=plate.id,count=drink['count'],drink_id=drink['id']).save()
+    for dessert in request.data['dessert']:
+      price += dessert['count'] * dessert['price']
+      PlateDessert(plate_id=plate.id, count=dessert['count'], dessert_id=dessert['id']).save()
+    for section_food in request.data['section_food']:
+      price += section_food['count'] * section_food['price']
+      PlateSectionFood(plate_id=plate.id, count=section_food['count'], section_food_id=section_food['id']).save()
+    plate.price=price
+    plate.save()
+    print(price)
+    return Response(PlateSerializer(plate).data)
 
 class PlateLayoutViewSet(viewsets.ModelViewSet):
   queryset = PlateLayout.objects.all()
@@ -106,20 +124,22 @@ class SubscribeViewSet(viewsets.ModelViewSet):
   filter_fields = ['plate__user',]
 
 
-  # def create(self, day_count, *args, **kwargs):
-  #   serializer = SubscribeSerializer()
-    # day_count = request.data['day_count']
-    # drink = request.data['drink']
-    # count = day_count//drink.count()
-  #   if day_count%drink.count()==0:
-  #     count = day_count/drink.count()
-  #   else:
-  #     for i in range(day_count%drink.count()):
-  #       count = count + 1
-  #   return Response(day_count, status=status.HTTP_201_CREATED)
-
-
-
+  # def create(self, request, *args, **kwargs):
+  #   plate = Plate(description=request.data['description'],image=request.data['image'],user=request.data['user_id'],layout=request.data['layout_id'],)
+  #   plate.save()
+  #   price=0
+  #   for drink in request.data['drink']:
+  #     price+=drink['count']*drink['price']
+  #     PlateDrink(plate_id=plate.id,count=drink['count'],drink_id=drink['id']).save()
+  #   for dessert in request.data['dessert']:
+  #     price += dessert['count'] * dessert['price']
+  #     PlateDessert(plate_id=plate.id, count=dessert['count'], dessert_id=dessert['id']).save()
+  #   for section_food in request.data['section_food']:
+  #     price += section_food['count'] * section_food['price']
+  #     PlateSectionFood(plate_id=plate.id, count=section_food['count'], section_food_id=section_food['id']).save()
+  #   subscribe = Subscribe(plate=request.data['plate_id'],day_count=request.data['day_count'],day=request.data['day'],address=request.data['address'],address_longitude=request.data['address_longitude'],
+  #                         address_latitude=request.data['address_latitude'],comment=request.data['comment'],price=price,)
+  #   return Response()
 
 
 @api_view(['GET'])

@@ -97,10 +97,12 @@ class SectionFood(models.Model):
 class Plate(models.Model):
   # name = models.CharField(max_length=255)
   description = models.TextField(null=False, blank=False)
-  image = models.ImageField(upload_to='uploads/', null=True, blank=True)
+  # image = models.CharField(max_length=1000, null=True, blank=True)
   user = models.ForeignKey(User,null=True,blank=True,on_delete=CASCADE)
   layout = models.ForeignKey(PlateLayout, on_delete=models.CASCADE, null=True,
                      blank=True, related_name="layout_plate")#DEBUG: redundant?
+  price= models.FloatField(null=True, blank=True, default=0.0)
+  # days
   # section_food = models.ManyToManyField(SectionFood, blank=True,related_name='plate_section_food')
   # drink =  models.ManyToManyField(PlateDrink, blank=True, related_name="plate_drink")
   # dessert =  models.ManyToManyField(PlateDessert, blank=True, related_name="food_dessert")
@@ -139,27 +141,29 @@ class Subscribe(models.Model):
   plate = models.ForeignKey(Plate, on_delete=models.CASCADE, null=True,
                      blank=True, related_name="subscribe_plate")
   day_count = models.IntegerField(default=0)
-  day = models.CharField(max_length=255, null=True, blank=True)
+  # day = models.CharField(max_length=255, null=True, blank=True)
   address = models.CharField(null=True,blank=True,max_length=1000)
   address_longitude = models.CharField(null=True,blank=True,max_length=255)
   address_latitude = models.CharField(null=True,blank=True,max_length=255)
   comment = models.CharField(null=True,blank=True,max_length=1000)
-  # price = models.FloatField(null=True, blank=True, default=0.0)
-  # @property
+  price = models.FloatField(null=True, blank=True, default=0.0)
 
+  #
+  # @property
   # def price(self):
-  # food1 = self.plate.drink.aggregate(sum=Sum('price'))['sum']
+  #   food1 = self.plate.drink_plate.aggregate(sum=Sum('drink__price'))['sum']
   # food2 = self.plate.dessert.aggregate(sum=Sum('price'))['sum']
   # food3 = self.plate.section_food.all().aggregate(sum=Sum('food__price'))['sum']
-  # pr = 0
-  # # print(self.plate.drink.count())
-  # if food1 is not None:
-  #   pr = pr+food1
+  #   return food1
+  #   pr = 0
+  #   print(self.plate.drink_plate.count)
+  #   if food1 is not None:
+  #     pr = pr+food1
   # if food2 is not None:
   #   pr = pr +food2
   # if food3 is not None:
   #   pr = pr+food3
-  # return pr*self.day_count
+  #   return pr
 
   #   food1 = self.plate.drink.all()
   #   food2 = self.plate.dessert.all()
