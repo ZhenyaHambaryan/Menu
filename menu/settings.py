@@ -49,6 +49,8 @@ INSTALLED_APPS = [
     'corsheaders',
     'user',
     'food',
+    'files',
+
 ]
 
 MIDDLEWARE = [

@@ -41,8 +41,10 @@ urlpatterns = [
 
     path('', include('django.contrib.auth.urls')), # login/signup tut
     path('api_auth/', include('rest_framework.urls')), # django tut, loginout only
+    path('files/', include('files.urls')),
     path('', include('user.urls')),
     path('', include('food.urls')),
+
 
     re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
