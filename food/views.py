@@ -8,17 +8,20 @@ from rest_framework.authtoken.models import Token
 from rest_framework.reverse import reverse
 from food.serializers import FoodSerializer, FoodTypeSerializer, FoodCategorySerializer, PlateSectionSerializer, \
                               PlateLayoutSerializer, PlateSerializer,IngredientsSerializer,SubscribeSerializer,\
-                              SectionFoodSerializer,BoxSerializer,PlateDrinkSerializer,PlateDessertSerializer,PlateSectionFoodSerializer
+                              SectionLayoutSerializer,BoxSerializer,PlateDrinkSerializer,PlateDessertSerializer,PlateFoodSerializer
 from food.models import Food, FoodType, FoodCategory, PlateSection, PlateLayout, Plate,Ingredients,Subscribe,\
-                        SectionFood,Box,PlateDrink,PlateDessert,PlateSectionFood
+                        SectionLayout,Box,PlateDrink,PlateDessert,PlateFood
 # import django_filters
 from rest_framework.filters import SearchFilter
 from django_filters import rest_framework as filters
 from rest_framework.pagination import PageNumberPagination
+from django.db.models import Sum,F
 
-class PlateSectionFoodViewSet(viewsets.ModelViewSet):
-  queryset = PlateSectionFood.objects.all()
-  serializer_class = PlateSectionFoodSerializer
+
+
+class PlateFoodViewSet(viewsets.ModelViewSet):
+  queryset = PlateFood.objects.all()
+  serializer_class = PlateFoodSerializer
 
 
 class PlateDrinkViewSet(viewsets.ModelViewSet):
@@ -79,9 +82,11 @@ class PlateSectionViewSet(viewsets.ModelViewSet):
   #     result.append(data)
   #   return paginator.get_paginated_response(result)
 
-class SectionFoodViewSet(viewsets.ModelViewSet):
-  queryset = SectionFood.objects.all()
-  serializer_class = SectionFoodSerializer
+class SectionLayoutViewSet(viewsets.ModelViewSet):
+  queryset = SectionLayout.objects.all()
+  serializer_class = SectionLayoutSerializer
+
+
 
 
 class PlateViewSet(viewsets.ModelViewSet):
@@ -94,19 +99,25 @@ class PlateViewSet(viewsets.ModelViewSet):
     plate = Plate(description=request.data['description'],user_id=request.data['user_id'],
                   layout_id=request.data['layout_id'])
     plate.save()
-    price=0
     for drink in request.data['drink']:
-      price+=drink['count']*drink['price']
       PlateDrink(plate_id=plate.id,count=drink['count'],drink_id=drink['id']).save()
     for dessert in request.data['dessert']:
-      price += dessert['count'] * dessert['price']
       PlateDessert(plate_id=plate.id, count=dessert['count'], dessert_id=dessert['id']).save()
-    for section_food in request.data['section_food']:
-      price += section_food['count'] * section_food['price']
-      PlateSectionFood(plate_id=plate.id, count=section_food['count'], section_food_id=section_food['id']).save()
+    for food in request.data['food']:
+      PlateFood(plate_id=plate.id, count=food['count'], food_id=food['id'], section_layout_id=food['section_layout']).save()
+    food1 = plate.drink_plate.aggregate(sum=Sum(F('drink__price') * F('count')))['sum']
+    food2 = plate.dessert_plate.aggregate(sum=Sum(F('dessert__price') * F('count')))['sum']
+    food3 = plate.food_plate.aggregate(sum=Sum(F('food__price') * F('count')))['sum']
+    price = 0
+    if food1 is not None:
+      price = price+food1
+    if food2 is not None:
+      price = price +food2
+    if food3 is not None:
+      price = price+food3
     plate.price=price
+    # sum hashvel
     plate.save()
-    print(price)
     return Response(PlateSerializer(plate).data)
 
 class PlateLayoutViewSet(viewsets.ModelViewSet):

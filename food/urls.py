@@ -2,16 +2,16 @@ from django.urls import path
 from rest_framework import urlpatterns, viewsets
 from rest_framework.urlpatterns import format_suffix_patterns
 from .views import FoodViewSet, FoodTypeViewSet, FoodCategoryViewSet, PlateSectionViewSet, PlateLayoutViewSet, PlateViewSet,\
-                                IngredientsViewSet,SubscribeViewSet,SectionFoodViewSet,BoxViewSet,PlateDrinkViewSet,PlateDessertViewSet,PlateSectionFoodViewSet
+                                IngredientsViewSet,SubscribeViewSet,SectionLayoutViewSet,BoxViewSet,PlateDrinkViewSet,PlateDessertViewSet,PlateFoodViewSet
 from food import views
 
 
-plate_section_food_list = PlateSectionFoodViewSet.as_view({
+plate_food_list = PlateFoodViewSet.as_view({
     'get': 'list',
     'post': 'create'
 })
 
-plate_section_food_detail = PlateSectionFoodViewSet.as_view({
+plate_food_detail = PlateFoodViewSet.as_view({
     'get': 'retrieve',
     'put': 'update',
     'patch': 'partial_update',
@@ -59,12 +59,12 @@ box_detail = BoxViewSet.as_view({
 
 
 
-section_food_list = SectionFoodViewSet.as_view({
+section_layout_list = SectionLayoutViewSet.as_view({
     'get': 'list',
     'post': 'create'
 })
 
-section_food_detail = SectionFoodViewSet.as_view({
+section_layout_detail = SectionLayoutViewSet.as_view({
     'get': 'retrieve',
     'put': 'update',
     'patch': 'partial_update',
@@ -189,16 +189,16 @@ urlpatterns = [
     path('plates/<int:pk>/', plate_detail, name='plate-detail'),
     path('subscribe/', subscribe_list, name='subscribe-list'),
     path('subscribe/<int:pk>/', subscribe_detail, name='subscribe-detail'),
-    path('section_food/', section_food_list, name='section-food-list'),
-    path('section_food/<int:pk>/', section_food_detail, name='section-food-detail'),
+    path('section_layout/', section_layout_list, name='section-layout-list'),
+    path('section_layout/<int:pk>/', section_layout_detail, name='section-layout-detail'),
     path('box/', box_list, name='box-list'),
     path('box/<int:pk>/', box_detail, name='box-detail'),
     path('plate_drink/', plate_drink_list, name='plate_drink-list'),
     path('plate_drink/<int:pk>/', plate_drink_detail, name='plate_drink-detail'),
     path('plate_dessert/', plate_dessert_list, name='plate_dessert-list'),
     path('plate_dessert/<int:pk>/', plate_dessert_detail, name='plate_dessert-detail'),
-    path('plate_section_food/', plate_section_food_list, name='plate_section_food-list'),
-    path('plate_section_food/<int:pk>/', plate_section_food_detail, name='plate_section_food-detail'),
+    path('plate_food/', plate_food_list, name='plate_food-list'),
+    path('plate_food/<int:pk>/', plate_food_detail, name='plate_food-detail'),
     # testing petk uni:
 
     path('add_fave_food', views.add_fave_food, name='add-fave-food'),
