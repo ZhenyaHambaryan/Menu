@@ -8,9 +8,9 @@ from rest_framework.authtoken.models import Token
 from rest_framework.reverse import reverse
 from food.serializers import FoodSerializer, FoodTypeSerializer, FoodCategorySerializer, PlateSectionSerializer, \
                               PlateLayoutSerializer, PlateSerializer,IngredientsSerializer,SubscribeSerializer,\
-                              SectionLayoutSerializer,BoxSerializer,PlateDrinkSerializer,PlateDessertSerializer,PlateFoodSerializer
+                              SectionLayoutSerializer,BoxSerializer,PlateDrinkSerializer,PlateDessertSerializer,PlateFoodSerializer,PlateDaysSerializer
 from food.models import Food, FoodType, FoodCategory, PlateSection, PlateLayout, Plate,Ingredients,Subscribe,\
-                        SectionLayout,Box,PlateDrink,PlateDessert,PlateFood
+                        SectionLayout,Box,PlateDrink,PlateDessert,PlateFood,PlateDays
 # import django_filters
 from rest_framework.filters import SearchFilter
 from django_filters import rest_framework as filters
@@ -18,6 +18,10 @@ from rest_framework.pagination import PageNumberPagination
 from django.db.models import Sum,F
 
 
+
+class PlateDaysViewSet(viewsets.ModelViewSet):
+  queryset = PlateDays.objects.all()
+  serializer_class = PlateDaysSerializer
 
 class PlateFoodViewSet(viewsets.ModelViewSet):
   queryset = PlateFood.objects.all()
@@ -96,7 +100,7 @@ class PlateViewSet(viewsets.ModelViewSet):
   filter_fields = ['layout',]
 
   def create(self, request, *args, **kwargs):
-    plate = Plate(description=request.data['description'],user_id=request.data['user_id'],
+    plate = Plate(description=request.data['description'],created_at=request.data['created_at'],user_id=request.data['user_id'],
                   layout_id=request.data['layout_id'])
     plate.save()
     for drink in request.data['drink']:
@@ -133,6 +137,8 @@ class SubscribeViewSet(viewsets.ModelViewSet):
   permission_classes = [IsAuthenticated]
   filter_backends = [filters.DjangoFilterBackend, SearchFilter]
   filter_fields = ['plate__user',]
+
+
 
 
   # def create(self, request, *args, **kwargs):

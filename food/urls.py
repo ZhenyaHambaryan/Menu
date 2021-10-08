@@ -2,8 +2,22 @@ from django.urls import path
 from rest_framework import urlpatterns, viewsets
 from rest_framework.urlpatterns import format_suffix_patterns
 from .views import FoodViewSet, FoodTypeViewSet, FoodCategoryViewSet, PlateSectionViewSet, PlateLayoutViewSet, PlateViewSet,\
-                                IngredientsViewSet,SubscribeViewSet,SectionLayoutViewSet,BoxViewSet,PlateDrinkViewSet,PlateDessertViewSet,PlateFoodViewSet
+                                IngredientsViewSet,SubscribeViewSet,SectionLayoutViewSet,BoxViewSet,PlateDrinkViewSet,PlateDessertViewSet,\
+                                PlateFoodViewSet,PlateDaysViewSet
 from food import views
+
+
+plate_days_list = PlateDaysViewSet.as_view({
+    'get': 'list',
+    'post': 'create'
+})
+
+plate_days_detail = PlateDaysViewSet.as_view({
+    'get': 'retrieve',
+    'put': 'update',
+    'patch': 'partial_update',
+    'delete': 'destroy'
+})
 
 
 plate_food_list = PlateFoodViewSet.as_view({
@@ -199,6 +213,8 @@ urlpatterns = [
     path('plate_dessert/<int:pk>/', plate_dessert_detail, name='plate_dessert-detail'),
     path('plate_food/', plate_food_list, name='plate_food-list'),
     path('plate_food/<int:pk>/', plate_food_detail, name='plate_food-detail'),
+    path('plate_days/', plate_days_list, name='plate_days-list'),
+    path('plate_days/<int:pk>/', plate_days_detail, name='plate_days-detail'),
     # testing petk uni:
 
     path('add_fave_food', views.add_fave_food, name='add-fave-food'),

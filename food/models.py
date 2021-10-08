@@ -97,12 +97,13 @@ class SectionLayout(models.Model):
 class Plate(models.Model):
   # name = models.CharField(max_length=255)
   description = models.TextField(null=False, blank=False)
+  created_at = models.DateTimeField(auto_now_add=True)
+  # updated = models.DateTimeField(auto_now=True)
   # image = models.CharField(max_length=1000, null=True, blank=True)
   user = models.ForeignKey(User,null=True,blank=True,on_delete=CASCADE)
   layout = models.ForeignKey(PlateLayout, on_delete=models.CASCADE, null=True,
                      blank=True, related_name="layout_plate")#DEBUG: redundant?
   price= models.FloatField(null=True, blank=True, default=0.0)
-  # days
   # section_food = models.ManyToManyField(SectionFood, blank=True,related_name='plate_section_food')
   # drink =  models.ManyToManyField(PlateDrink, blank=True, related_name="plate_drink")
   # dessert =  models.ManyToManyField(PlateDessert, blank=True, related_name="food_dessert")
@@ -123,6 +124,10 @@ class PlateFood(models.Model):
   food = models.ForeignKey(Food, blank=True, on_delete=models.CASCADE, null=True, related_name="plate_food")
   section_layout = models.ForeignKey(SectionLayout, blank=True, on_delete=models.CASCADE, null=True, related_name="section_layout_plate_food")
   count = models.IntegerField(null=False, blank=False, default=0)
+
+class PlateDays(models.Model):
+  plate = models.ForeignKey(Plate, blank=True, on_delete=models.CASCADE, null=True, related_name="days_plate")
+  day = models.DateField()
 
   # foods = models.ManyToManyField(Food, blank=True)
   # has_drink = models.BooleanField(default=True)
@@ -147,7 +152,33 @@ class Subscribe(models.Model):
   address_longitude = models.CharField(null=True,blank=True,max_length=255)
   address_latitude = models.CharField(null=True,blank=True,max_length=255)
   comment = models.CharField(null=True,blank=True,max_length=1000)
-  price = models.FloatField(null=True, blank=True, default=0.0)
+  # price = models.FloatField(null=True, blank=True, default=0.0)
+
+
+def update(self, request, *args, **kwargs):
+  plate = Plate(description=request.data['description'],created_at=request.data['created_at'], user_id=request.data['user_id'],
+                layout_id=request.data['layout_id'])
+  plate.save()
+  for drink in request.data['drink']:
+    PlateDrink(plate_id=plate.id, count=drink['count'], drink_id=drink['id']).save()
+  for dessert in request.data['dessert']:
+    PlateDessert(plate_id=plate.id, count=dessert['count'], dessert_id=dessert['id']).save()
+  for food in request.data['food']:
+    PlateFood(plate_id=plate.id, count=food['count'], food_id=food['id'],
+              section_layout_id=food['section_layout']).save()
+  food1 = plate.drink_plate.aggregate(sum=Sum(F('drink__price') * F('count')))['sum']
+  food2 = plate.dessert_plate.aggregate(sum=Sum(F('dessert__price') * F('count')))['sum']
+  food3 = plate.food_plate.aggregate(sum=Sum(F('food__price') * F('count')))['sum']
+  price = 0
+  if food1 is not None:
+    price = price + food1
+  if food2 is not None:
+    price = price + food2
+  if food3 is not None:
+    price = price + food3
+  plate.price = price
+  plate.save()
+  return Response(PlateSerializer(plate).data)
 
   #
   # @property
