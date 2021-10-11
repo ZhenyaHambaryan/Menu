@@ -7,6 +7,9 @@ from .views import FoodViewSet, FoodTypeViewSet, FoodCategoryViewSet, PlateSecti
 from food import views
 
 
+# router.register(r'content', views.ContentViewSet)
+
+
 plate_days_list = PlateDaysViewSet.as_view({
     'get': 'list',
     'post': 'create'

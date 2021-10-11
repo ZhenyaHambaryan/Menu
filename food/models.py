@@ -98,7 +98,7 @@ class Plate(models.Model):
   # name = models.CharField(max_length=255)
   description = models.TextField(null=False, blank=False)
   created_at = models.DateTimeField(auto_now_add=True)
-  # updated = models.DateTimeField(auto_now=True)
+  # updated_at = models.DateTimeField(auto_now=True)
   # image = models.CharField(max_length=1000, null=True, blank=True)
   user = models.ForeignKey(User,null=True,blank=True,on_delete=CASCADE)
   layout = models.ForeignKey(PlateLayout, on_delete=models.CASCADE, null=True,
@@ -155,30 +155,7 @@ class Subscribe(models.Model):
   # price = models.FloatField(null=True, blank=True, default=0.0)
 
 
-def update(self, request, *args, **kwargs):
-  plate = Plate(description=request.data['description'],created_at=request.data['created_at'], user_id=request.data['user_id'],
-                layout_id=request.data['layout_id'])
-  plate.save()
-  for drink in request.data['drink']:
-    PlateDrink(plate_id=plate.id, count=drink['count'], drink_id=drink['id']).save()
-  for dessert in request.data['dessert']:
-    PlateDessert(plate_id=plate.id, count=dessert['count'], dessert_id=dessert['id']).save()
-  for food in request.data['food']:
-    PlateFood(plate_id=plate.id, count=food['count'], food_id=food['id'],
-              section_layout_id=food['section_layout']).save()
-  food1 = plate.drink_plate.aggregate(sum=Sum(F('drink__price') * F('count')))['sum']
-  food2 = plate.dessert_plate.aggregate(sum=Sum(F('dessert__price') * F('count')))['sum']
-  food3 = plate.food_plate.aggregate(sum=Sum(F('food__price') * F('count')))['sum']
-  price = 0
-  if food1 is not None:
-    price = price + food1
-  if food2 is not None:
-    price = price + food2
-  if food3 is not None:
-    price = price + food3
-  plate.price = price
-  plate.save()
-  return Response(PlateSerializer(plate).data)
+
 
   #
   # @property

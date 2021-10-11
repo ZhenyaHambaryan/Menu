@@ -124,6 +124,30 @@ class PlateViewSet(viewsets.ModelViewSet):
     plate.save()
     return Response(PlateSerializer(plate).data)
 
+  def update(self,request,pk):
+    plate_id=request.data['plate_id']
+    plate = Plate.objects.get(id=plate_id)
+    # for drink in request.data['drink']:
+    #   PlateDrink(plate_id=plate.id, count=drink['count'], drink_id=drink['id']).save()
+    # for dessert in request.data['dessert']:
+    #   PlateDessert(plate_id=plate.id, count=dessert['count'], dessert_id=dessert['id']).save()
+    # for food in request.data['food']:
+    #   PlateFood(plate_id=plate.id, count=food['count'], food_id=food['id'],
+    #             section_layout_id=food['section_layout']).save()
+    food1 = plate.drink_plate.aggregate(sum=Sum(F('drink__price') * F('count')))['sum']
+    food2 = plate.dessert_plate.aggregate(sum=Sum(F('dessert__price') * F('count')))['sum']
+    food3 = plate.food_plate.aggregate(sum=Sum(F('food__price') * F('count')))['sum']
+    price = 0
+    if food1 is not None:
+      price = price + food1
+    if food2 is not None:
+      price = price + food2
+    if food3 is not None:
+      price = price + food3
+    plate.price = price
+    plate.save()
+    return Response(PlateSerializer(plate).data)
+
 class PlateLayoutViewSet(viewsets.ModelViewSet):
   queryset = PlateLayout.objects.all()
   serializer_class = PlateLayoutSerializer
