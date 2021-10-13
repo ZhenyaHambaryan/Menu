@@ -134,7 +134,7 @@ class PlateLayoutSerializer(serializers.ModelSerializer):
 
 class SectionLayoutSerializer(serializers.ModelSerializer):
   # sections = PlateSectionSerializer()
-  # food = FoodSerializer()
+  # layout = PlateLayoutSerializer()
   class Meta:
     model = SectionLayout
     fields = '__all__'
@@ -216,7 +216,7 @@ class SubscribeSerializer(serializers.ModelSerializer):
 
   def to_representation(self, instance):
     representation = super(SubscribeSerializer,self).to_representation(instance)
-    representation["plate"] = PlateSerializer(instance.plate).data
+    representation["plate"] = PlateSerializer(instance.plate,many=True).data
 
     return representation
 

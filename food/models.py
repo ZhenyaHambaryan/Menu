@@ -144,15 +144,14 @@ class PlateDays(models.Model):
     return "Plate #" + str(self.id) + ", User:" + str(self.user)
 
 class Subscribe(models.Model):
-  plate = models.ForeignKey(Plate, on_delete=models.CASCADE, null=True,
-                     blank=True, related_name="subscribe_plate")
+  plate = models.ManyToManyField(Plate, related_name="subscribe_plate")
   day_count = models.IntegerField(default=0)
   # day = models.CharField(max_length=255, null=True, blank=True)
   address = models.CharField(null=True,blank=True,max_length=1000)
   address_longitude = models.CharField(null=True,blank=True,max_length=255)
   address_latitude = models.CharField(null=True,blank=True,max_length=255)
   comment = models.CharField(null=True,blank=True,max_length=1000)
-  # price = models.FloatField(null=True, blank=True, default=0.0)
+  price = models.FloatField(null=True, blank=True, default=0.0)
 
 
 

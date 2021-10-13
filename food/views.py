@@ -125,15 +125,8 @@ class PlateViewSet(viewsets.ModelViewSet):
     return Response(PlateSerializer(plate).data)
 
   def update(self,request,pk):
-    plate_id=request.data['plate_id']
+    plate_id=pk
     plate = Plate.objects.get(id=plate_id)
-    # for drink in request.data['drink']:
-    #   PlateDrink(plate_id=plate.id, count=drink['count'], drink_id=drink['id']).save()
-    # for dessert in request.data['dessert']:
-    #   PlateDessert(plate_id=plate.id, count=dessert['count'], dessert_id=dessert['id']).save()
-    # for food in request.data['food']:
-    #   PlateFood(plate_id=plate.id, count=food['count'], food_id=food['id'],
-    #             section_layout_id=food['section_layout']).save()
     food1 = plate.drink_plate.aggregate(sum=Sum(F('drink__price') * F('count')))['sum']
     food2 = plate.dessert_plate.aggregate(sum=Sum(F('dessert__price') * F('count')))['sum']
     food3 = plate.food_plate.aggregate(sum=Sum(F('food__price') * F('count')))['sum']
@@ -161,8 +154,16 @@ class SubscribeViewSet(viewsets.ModelViewSet):
   permission_classes = [IsAuthenticated]
   filter_backends = [filters.DjangoFilterBackend, SearchFilter]
   filter_fields = ['plate__user',]
-
-
+  #
+  # def create(self, request, *args, **kwargs):
+  #   subscribe = Subscribe(day_count=request.data['day_count'],address=request.data['address'],address_longitude=request.data['address_longitude'],
+  #                         address_latitude=request.data['address_latitude'],comment=request.data['comment'])
+  #   subscribe.save()
+  #   price=subscribe.plate.aggregate(sum=Sum('price'))['sum']
+  #   print(price)
+  #   subscribe.price=price
+  #   subscribe.save
+  #   return Response(SubscribeSerializer(subscribe).data)
 
 
   # def create(self, request, *args, **kwargs):
