@@ -6,18 +6,20 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import viewsets, status
 from rest_framework.authtoken.models import Token
 from rest_framework.reverse import reverse
-from food.serializers import FoodSerializer, FoodTypeSerializer, FoodCategorySerializer, PlateSectionSerializer, \
+from food.serializers import FoodSerializer, FoodTypeSerializer, FoodCategorySerializer, PlateSectionSerializer,TransactionSerializer, \
                               PlateLayoutSerializer, PlateSerializer,IngredientsSerializer,SubscribeSerializer,\
                               SectionLayoutSerializer,BoxSerializer,PlateDrinkSerializer,PlateDessertSerializer,PlateFoodSerializer,PlateDaysSerializer
 from food.models import Food, FoodType, FoodCategory, PlateSection, PlateLayout, Plate,Ingredients,Subscribe,\
-                        SectionLayout,Box,PlateDrink,PlateDessert,PlateFood,PlateDays
+                        SectionLayout,Box,PlateDrink,PlateDessert,PlateFood,PlateDays,Transaction
 # import django_filters
 from rest_framework.filters import SearchFilter
 from django_filters import rest_framework as filters
 from rest_framework.pagination import PageNumberPagination
 from django.db.models import Sum,F
 
-
+class TransactionViewSet(viewsets.ModelViewSet):
+  queryset = Transaction.objects.all()
+  serializer_class = TransactionSerializer
 
 class PlateDaysViewSet(viewsets.ModelViewSet):
   queryset = PlateDays.objects.all()
@@ -154,34 +156,16 @@ class SubscribeViewSet(viewsets.ModelViewSet):
   permission_classes = [IsAuthenticated]
   filter_backends = [filters.DjangoFilterBackend, SearchFilter]
   filter_fields = ['plate__user',]
-  #
-  # def create(self, request, *args, **kwargs):
-  #   subscribe = Subscribe(day_count=request.data['day_count'],address=request.data['address'],address_longitude=request.data['address_longitude'],
-  #                         address_latitude=request.data['address_latitude'],comment=request.data['comment'])
-  #   subscribe.save()
-  #   price=subscribe.plate.aggregate(sum=Sum('price'))['sum']
-  #   print(price)
-  #   subscribe.price=price
-  #   subscribe.save
-  #   return Response(SubscribeSerializer(subscribe).data)
 
-
-  # def create(self, request, *args, **kwargs):
-  #   plate = Plate(description=request.data['description'],image=request.data['image'],user=request.data['user_id'],layout=request.data['layout_id'],)
-  #   plate.save()
-  #   price=0
-  #   for drink in request.data['drink']:
-  #     price+=drink['count']*drink['price']
-  #     PlateDrink(plate_id=plate.id,count=drink['count'],drink_id=drink['id']).save()
-  #   for dessert in request.data['dessert']:
-  #     price += dessert['count'] * dessert['price']
-  #     PlateDessert(plate_id=plate.id, count=dessert['count'], dessert_id=dessert['id']).save()
-  #   for section_food in request.data['section_food']:
-  #     price += section_food['count'] * section_food['price']
-  #     PlateSectionFood(plate_id=plate.id, count=section_food['count'], section_food_id=section_food['id']).save()
-  #   subscribe = Subscribe(plate=request.data['plate_id'],day_count=request.data['day_count'],day=request.data['day'],address=request.data['address'],address_longitude=request.data['address_longitude'],
-  #                         address_latitude=request.data['address_latitude'],comment=request.data['comment'],price=price,)
-  #   return Response()
+  def create(self, request, *args, **kwargs):
+    subscribe = Subscribe(day_count=request.data['day_count'],address=request.data['address'],address_longitude=request.data['address_longitude'],
+                          address_latitude=request.data['address_latitude'],comment=request.data['comment'])
+    subscribe.save()
+    for i in request.data['plate_id']:
+      sub=subscribe.plate.add(i)
+    subscribe.price=subscribe.plate.aggregate(sum=Sum('price'))['sum']
+    subscribe.save
+    return Response(SubscribeSerializer(subscribe).data)
 
 
 @api_view(['GET'])

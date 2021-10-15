@@ -3,11 +3,23 @@ from rest_framework import urlpatterns, viewsets
 from rest_framework.urlpatterns import format_suffix_patterns
 from .views import FoodViewSet, FoodTypeViewSet, FoodCategoryViewSet, PlateSectionViewSet, PlateLayoutViewSet, PlateViewSet,\
                                 IngredientsViewSet,SubscribeViewSet,SectionLayoutViewSet,BoxViewSet,PlateDrinkViewSet,PlateDessertViewSet,\
-                                PlateFoodViewSet,PlateDaysViewSet
+                                PlateFoodViewSet,PlateDaysViewSet,TransactionViewSet
 from food import views
 
 
 # router.register(r'content', views.ContentViewSet)
+
+transaction_list = TransactionViewSet.as_view({
+    'get': 'list',
+    'post': 'create'
+})
+
+transaction_detail = TransactionViewSet.as_view({
+    'get': 'retrieve',
+    'put': 'update',
+    'patch': 'partial_update',
+    'delete': 'destroy'
+})
 
 
 plate_days_list = PlateDaysViewSet.as_view({
@@ -218,6 +230,8 @@ urlpatterns = [
     path('plate_food/<int:pk>/', plate_food_detail, name='plate_food-detail'),
     path('plate_days/', plate_days_list, name='plate_days-list'),
     path('plate_days/<int:pk>/', plate_days_detail, name='plate_days-detail'),
+    path('transaction/', transaction_list, name='transaction-list'),
+    path('transaction/<int:pk>/',transaction_detail, name='transaction-detail'),
     # testing petk uni:
 
     path('add_fave_food', views.add_fave_food, name='add-fave-food'),

@@ -1,12 +1,15 @@
 from django.db.models import fields
 from food.models import Food, FoodType, FoodCategory, PlateSection, PlateLayout, Plate,Ingredients,Subscribe,\
-                        SectionLayout,Box,PlateDrink,PlateDessert,PlateFood,PlateDays
+                        SectionLayout,Box,PlateDrink,PlateDessert,PlateFood,PlateDays,Transaction
 from user.serializers import UserDetailSerializer
 from rest_framework import serializers
 from django.contrib.auth.models import User
 import sys,json
 
-
+class TransactionSerializer(serializers.ModelSerializer):
+  class Meta:
+    model = Transaction
+    fields = '__all__'
 
 
 class FoodCategorySerializer(serializers.ModelSerializer):
@@ -199,12 +202,14 @@ class PlateSerializer(serializers.ModelSerializer):
     representation["drink"] = PlateDrinkSerializer(instance.drink_plate,many=True).data
     representation["dessert"] = PlateDessertSerializer(instance.dessert_plate,many=True).data
     representation["food"] = PlateFoodSerializer(instance.food_plate,many=True).data
+    # representation["transaction"] = TransactionSerializer(instance.transacion_subscribe).data
 
 
-    try:
-      representation['description'] = json.loads(instance.description)
-    except:
-      representation['description'] = None
+
+    # try:
+    #   representation['description'] = json.loads(instance.description)
+    # except:
+    #   representation['description'] = None
     return representation
 
 

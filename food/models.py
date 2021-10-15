@@ -154,7 +154,20 @@ class Subscribe(models.Model):
   price = models.FloatField(null=True, blank=True, default=0.0)
 
 
+class Transaction(models.Model):
+  amount = models.FloatField(null=True)
+  payment_id = models.CharField(null=True, max_length=1000, blank=True)
+  date = models.DateTimeField(auto_now_add=True)
+  status = models.CharField(max_length=255, null=True, blank=True, default="pending")
+  client = models.ForeignKey(User, null=True, on_delete=models.CASCADE, blank=False,
+                             related_name="client_transactions")
 
+  subscribe = models.ForeignKey(Subscribe, null=True, on_delete=models.CASCADE, blank=False,related_name="transacion_subscribe")
+  refunded_amount = models.FloatField(null=True, default=0, blank=True)
+  refunded_date = models.DateTimeField(blank=True, null=True)
+
+  def str(self):
+    return str(self.amount)
 
   #
   # @property
