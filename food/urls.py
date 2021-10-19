@@ -3,11 +3,24 @@ from rest_framework import urlpatterns, viewsets
 from rest_framework.urlpatterns import format_suffix_patterns
 from .views import FoodViewSet, FoodTypeViewSet, FoodCategoryViewSet, PlateSectionViewSet, PlateLayoutViewSet, PlateViewSet,\
                                 IngredientsViewSet,SubscribeViewSet,SectionLayoutViewSet,BoxViewSet,PlateDrinkViewSet,PlateDessertViewSet,\
-                                PlateFoodViewSet,PlateDaysViewSet,TransactionViewSet
+                                PlateFoodViewSet,PlateDaysViewSet,TransactionViewSet,RequestToCancelViewSet
 from food import views
 
 
 # router.register(r'content', views.ContentViewSet)
+
+request_to_cancel_list = RequestToCancelViewSet.as_view({
+    'get': 'list',
+    'post': 'create'
+})
+
+request_to_cancel_detail = RequestToCancelViewSet.as_view({
+    'get': 'retrieve',
+    'put': 'update',
+    'patch': 'partial_update',
+    'delete': 'destroy'
+})
+
 
 transaction_list = TransactionViewSet.as_view({
     'get': 'list',
@@ -222,16 +235,18 @@ urlpatterns = [
     path('section_layout/<int:pk>/', section_layout_detail, name='section-layout-detail'),
     path('box/', box_list, name='box-list'),
     path('box/<int:pk>/', box_detail, name='box-detail'),
-    path('plate_drink/', plate_drink_list, name='plate_drink-list'),
-    path('plate_drink/<int:pk>/', plate_drink_detail, name='plate_drink-detail'),
-    path('plate_dessert/', plate_dessert_list, name='plate_dessert-list'),
-    path('plate_dessert/<int:pk>/', plate_dessert_detail, name='plate_dessert-detail'),
-    path('plate_food/', plate_food_list, name='plate_food-list'),
-    path('plate_food/<int:pk>/', plate_food_detail, name='plate_food-detail'),
-    path('plate_days/', plate_days_list, name='plate_days-list'),
-    path('plate_days/<int:pk>/', plate_days_detail, name='plate_days-detail'),
+    path('plate_drink/', plate_drink_list, name='plate-drink-list'),
+    path('plate_drink/<int:pk>/', plate_drink_detail, name='plate-drink-detail'),
+    path('plate_dessert/', plate_dessert_list, name='plate-dessert-list'),
+    path('plate_dessert/<int:pk>/', plate_dessert_detail, name='plate-dessert-detail'),
+    path('plate_food/', plate_food_list, name='plate-food-list'),
+    path('plate_food/<int:pk>/', plate_food_detail, name='plate-food-detail'),
+    path('plate_days/', plate_days_list, name='plate-days-list'),
+    path('plate_days/<int:pk>/', plate_days_detail, name='plate-days-detail'),
     path('transaction/', transaction_list, name='transaction-list'),
     path('transaction/<int:pk>/',transaction_detail, name='transaction-detail'),
+    path('request_to_cancel/', request_to_cancel_list, name='request-to-cancel-list'),
+    path('request_to_cancel/<int:pk>/', request_to_cancel_detail, name='request-to-cancel-detail'),
     # testing petk uni:
 
     path('add_fave_food', views.add_fave_food, name='add-fave-food'),

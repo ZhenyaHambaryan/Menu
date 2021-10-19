@@ -6,14 +6,18 @@ from django.db.models.deletion import CASCADE, PROTECT, SET_NULL
 # from django.db.models import Sum
 
 
+REQUEST_STATUS=[
+    ("new",'новый'),
+    ("pending",'в ожидании'),
+    ("cancel",'отменить'),
+    ("approved",'утверждена')
+]
 
 
 class FoodCategory(models.Model):
   name = models.TextField(null=False, blank=False)
   description = models.TextField(null=False, blank=False)
   image =  models.ImageField(upload_to='uploads/',null=True, blank=True)
-
-
 
   def __str__(self):
     return self.name
@@ -71,9 +75,6 @@ class PlateLayout(models.Model):
   name = models.TextField(null=False, blank=False)
   description = models.TextField(null=False, blank=False)
   image = models.ImageField(upload_to='uploads/', null=True, blank=True)
-  # sections = models.ManyToManyField(PlateSection, blank=True)
-  # has_drink = models.BooleanField(default=False)
-  # has_dessert = models.BooleanField(default=False)
   count = models.IntegerField(default=0)
 
 
@@ -88,7 +89,7 @@ class SectionLayout(models.Model):
   section = models.ForeignKey(PlateSection, on_delete=models.CASCADE, null=True,
                      blank=True, related_name="section")
   layout = models.ForeignKey(PlateLayout, on_delete=models.CASCADE, null=True,
-                     blank=True, related_name="foods")
+                     blank=True, related_name="layout")
 
 
 
@@ -129,24 +130,10 @@ class PlateDays(models.Model):
   plate = models.ForeignKey(Plate, blank=True, on_delete=models.CASCADE, null=True, related_name="days_plate")
   day = models.DateField()
 
-  # foods = models.ManyToManyField(Food, blank=True)
-  # has_drink = models.BooleanField(default=True)
-  # has_dessert = models.BooleanField(default=True)
-  #NOTE: the number of sections in layout must equal number of foods
-    # @property
-  # def price(self):
-    # price = 0
-    # for f in self.foods.all():
-    #   price += f.price
-    # return price
-    #
-  def __str__(self):
-    return "Plate #" + str(self.id) + ", User:" + str(self.user)
 
 class Subscribe(models.Model):
   plate = models.ManyToManyField(Plate, related_name="subscribe_plate")
   day_count = models.IntegerField(default=0)
-  # day = models.CharField(max_length=255, null=True, blank=True)
   address = models.CharField(null=True,blank=True,max_length=1000)
   address_longitude = models.CharField(null=True,blank=True,max_length=255)
   address_latitude = models.CharField(null=True,blank=True,max_length=255)
@@ -159,9 +146,7 @@ class Transaction(models.Model):
   payment_id = models.CharField(null=True, max_length=1000, blank=True)
   date = models.DateTimeField(auto_now_add=True)
   status = models.CharField(max_length=255, null=True, blank=True, default="pending")
-  client = models.ForeignKey(User, null=True, on_delete=models.CASCADE, blank=False,
-                             related_name="client_transactions")
-
+  client = models.ForeignKey(User, null=True, on_delete=models.CASCADE, blank=False, related_name="client_transactions")
   subscribe = models.ForeignKey(Subscribe, null=True, on_delete=models.CASCADE, blank=False,related_name="transacion_subscribe")
   refunded_amount = models.FloatField(null=True, default=0, blank=True)
   refunded_date = models.DateTimeField(blank=True, null=True)
@@ -169,7 +154,28 @@ class Transaction(models.Model):
   def str(self):
     return str(self.amount)
 
-  #
+class RequestToCancel(models.Model):
+  user = models.ForeignKey(User, null=True, on_delete=models.CASCADE, blank=False, related_name="request_user")
+  subscribe = models.ForeignKey(Subscribe, null=True, on_delete=models.CASCADE, blank=False, related_name="request_subscribe")
+  description = models.TextField(null=False, blank=False)
+  status = models.CharField(max_length=255, null=True, blank=True, default='new', choices=REQUEST_STATUS)
+
+
+
+class Box(models.Model):
+  name = models.TextField(null=False, blank=False)
+  description = models.TextField(null=False, blank=False)
+  image = models.ImageField(upload_to='uploads/', null=True, blank=True)
+  user = models.ForeignKey(User,null=True,blank=True,on_delete=CASCADE)
+  layout = models.ForeignKey(PlateLayout, on_delete=models.CASCADE, null=True,
+                     blank=True, related_name="layout_box")#DEBUG: redundant?
+  # section_food = models.ManyToManyField(SectionFood, blank=True)
+  # foods = models.ManyToManyField(Food, blank=True)
+  drink =  models.ManyToManyField(Food, blank=True, related_name="box_drink")
+  dessert =  models.ManyToManyField(Food, blank=True, related_name="box_dessert")
+  has_drink = models.BooleanField(default=True)
+  has_dessert = models.BooleanField(default=True)
+
   # @property
   # def price(self):
   # food1 = self.plate.drink_plate.aggregate(sum=Sum('drink__price'))['sum']
@@ -205,44 +211,13 @@ class Transaction(models.Model):
   #       pr3=pr+i.aggregate(sum=Sum('food__price'))['sum']
   #       n=n-1
   #   return pr1+pr2+pr3
-    # for i in food1:
-    #   pr1 = i.aggregate(sum=Sum('price'))['sum'] * (self.day_count / self.plate.drink.count())
-    # for i in food2:
-    #   pr2 = i.aggregate(sum=Sum('price'))['sum'] * (self.day_count / self.plate.dessert.count())
-    # for i in food3:
-    #   pr3 = i.aggregate(sum=Sum('food__price'))['sum'] * (self.day_count / self.plate.section_food.food.count())
-    # return pr1+pr2+pr3
+  # for i in food1:
+  #   pr1 = i.aggregate(sum=Sum('price'))['sum'] * (self.day_count / self.plate.drink.count())
+  # for i in food2:
+  #   pr2 = i.aggregate(sum=Sum('price'))['sum'] * (self.day_count / self.plate.dessert.count())
+  # for i in food3:
+  #   pr3 = i.aggregate(sum=Sum('food__price'))['sum'] * (self.day_count / self.plate.section_food.food.count())
+  # return pr1+pr2+pr3
 
 
-    # if food1 is None and food2 and food3 is not None :
-    #   return (food2+food3)*self.day_count
-    # if food2 is  None  and food1 and food3 is not  None:
-    #   return (food1+food3)*self.day_count
-    # if food3 is  None  and food1 and food2 is not None:
-    #   return (food1+food2)*self.day_count
-    # if food2 and food3 is None and food1 is not None:
-    #   return food1*self.day_count
-    # if food1 and food3 is None and food2 is not None:
-    #   return food2*self.day_count
-    # if food1 and food2 is  None and food3 is not None:
-    #   return food3*self.day_count
-    # if food1 and food2 and food3 is None:
-    #   return 0
 
-
-    # return foods
-
-
-class Box(models.Model):
-  name = models.TextField(null=False, blank=False)
-  description = models.TextField(null=False, blank=False)
-  image = models.ImageField(upload_to='uploads/', null=True, blank=True)
-  user = models.ForeignKey(User,null=True,blank=True,on_delete=CASCADE)
-  layout = models.ForeignKey(PlateLayout, on_delete=models.CASCADE, null=True,
-                     blank=True, related_name="layout_box")#DEBUG: redundant?
-  # section_food = models.ManyToManyField(SectionFood, blank=True)
-  # foods = models.ManyToManyField(Food, blank=True)
-  drink =  models.ManyToManyField(Food, blank=True, related_name="box_drink")
-  dessert =  models.ManyToManyField(Food, blank=True, related_name="box_dessert")
-  has_drink = models.BooleanField(default=True)
-  has_dessert = models.BooleanField(default=True)

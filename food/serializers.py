@@ -1,10 +1,17 @@
 from django.db.models import fields
 from food.models import Food, FoodType, FoodCategory, PlateSection, PlateLayout, Plate,Ingredients,Subscribe,\
-                        SectionLayout,Box,PlateDrink,PlateDessert,PlateFood,PlateDays,Transaction
+                        SectionLayout,Box,PlateDrink,PlateDessert,PlateFood,PlateDays,Transaction,RequestToCancel
 from user.serializers import UserDetailSerializer
 from rest_framework import serializers
 from django.contrib.auth.models import User
 import sys,json
+
+
+class RequestToCancelSerializer(serializers.ModelSerializer):
+  class Meta:
+    model = RequestToCancel
+    fields = '__all__'
+
 
 class TransactionSerializer(serializers.ModelSerializer):
   class Meta:
@@ -206,10 +213,10 @@ class PlateSerializer(serializers.ModelSerializer):
 
 
 
-    # try:
-    #   representation['description'] = json.loads(instance.description)
-    # except:
-    #   representation['description'] = None
+    try:
+      representation['description'] = json.loads(instance.description)
+    except:
+      representation['description'] = None
     return representation
 
 

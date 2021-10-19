@@ -7,15 +7,21 @@ from rest_framework import viewsets, status
 from rest_framework.authtoken.models import Token
 from rest_framework.reverse import reverse
 from food.serializers import FoodSerializer, FoodTypeSerializer, FoodCategorySerializer, PlateSectionSerializer,TransactionSerializer, \
-                              PlateLayoutSerializer, PlateSerializer,IngredientsSerializer,SubscribeSerializer,\
+                              PlateLayoutSerializer, PlateSerializer,IngredientsSerializer,SubscribeSerializer,RequestToCancelSerializer,\
                               SectionLayoutSerializer,BoxSerializer,PlateDrinkSerializer,PlateDessertSerializer,PlateFoodSerializer,PlateDaysSerializer
 from food.models import Food, FoodType, FoodCategory, PlateSection, PlateLayout, Plate,Ingredients,Subscribe,\
-                        SectionLayout,Box,PlateDrink,PlateDessert,PlateFood,PlateDays,Transaction
+                        SectionLayout,Box,PlateDrink,PlateDessert,PlateFood,PlateDays,Transaction,RequestToCancel
 # import django_filters
 from rest_framework.filters import SearchFilter
 from django_filters import rest_framework as filters
 from rest_framework.pagination import PageNumberPagination
 from django.db.models import Sum,F
+
+
+class RequestToCancelViewSet(viewsets.ModelViewSet):
+  queryset = RequestToCancel.objects.all()
+  serializer_class = RequestToCancelSerializer
+
 
 class TransactionViewSet(viewsets.ModelViewSet):
   queryset = Transaction.objects.all()
@@ -164,7 +170,7 @@ class SubscribeViewSet(viewsets.ModelViewSet):
     for i in request.data['plate_id']:
       sub=subscribe.plate.add(i)
     subscribe.price=subscribe.plate.aggregate(sum=Sum('price'))['sum']
-    subscribe.save
+    subscribe.save()
     return Response(SubscribeSerializer(subscribe).data)
 
 
