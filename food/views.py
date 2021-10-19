@@ -6,17 +6,21 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import viewsets, status
 from rest_framework.authtoken.models import Token
 from rest_framework.reverse import reverse
-from food.serializers import FoodSerializer, FoodTypeSerializer, FoodCategorySerializer, PlateSectionSerializer,TransactionSerializer, \
+from food.serializers import FoodSerializer, FoodTypeSerializer, FoodCategorySerializer, PlateSectionSerializer,TransactionSerializer,TakeSerializer, \
                               PlateLayoutSerializer, PlateSerializer,IngredientsSerializer,SubscribeSerializer,RequestToCancelSerializer,\
                               SectionLayoutSerializer,BoxSerializer,PlateDrinkSerializer,PlateDessertSerializer,PlateFoodSerializer,PlateDaysSerializer
 from food.models import Food, FoodType, FoodCategory, PlateSection, PlateLayout, Plate,Ingredients,Subscribe,\
-                        SectionLayout,Box,PlateDrink,PlateDessert,PlateFood,PlateDays,Transaction,RequestToCancel
+                        SectionLayout,Box,PlateDrink,PlateDessert,PlateFood,PlateDays,Transaction,RequestToCancel,Take
 # import django_filters
 from rest_framework.filters import SearchFilter
 from django_filters import rest_framework as filters
 from rest_framework.pagination import PageNumberPagination
 from django.db.models import Sum,F
 
+
+class TakeViewSet(viewsets.ModelViewSet):
+  queryset = Take.objects.all()
+  serializer_class = TakeSerializer
 
 class RequestToCancelViewSet(viewsets.ModelViewSet):
   queryset = RequestToCancel.objects.all()
@@ -105,7 +109,7 @@ class PlateViewSet(viewsets.ModelViewSet):
   queryset = Plate.objects.all()
   serializer_class = PlateSerializer
   filter_backends = [filters.DjangoFilterBackend, SearchFilter]
-  filter_fields = ['layout',]
+  filter_fields = ['layout','days_plate__day',]
 
   def create(self, request, *args, **kwargs):
     plate = Plate(description=request.data['description'],created_at=request.data['created_at'],user_id=request.data['user_id'],

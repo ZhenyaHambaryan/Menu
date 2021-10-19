@@ -161,6 +161,14 @@ class RequestToCancel(models.Model):
   status = models.CharField(max_length=255, null=True, blank=True, default='new', choices=REQUEST_STATUS)
 
 
+class Take(models.Model):
+  plate = models.ForeignKey(Plate, blank=True, on_delete=models.CASCADE, null=True, related_name="take_plate")
+  section = models.ForeignKey(PlateSection, on_delete=models.CASCADE, null=True,blank=True, related_name="take_section")
+  food =  models.ForeignKey(Food, on_delete=models.CASCADE, null=True, blank=True, related_name="take_food")
+  user = models.ForeignKey(User, null=True, on_delete=models.CASCADE, blank=False, related_name="take_user")
+  date =  models.DateField()
+
+
 
 class Box(models.Model):
   name = models.TextField(null=False, blank=False)

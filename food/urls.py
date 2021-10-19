@@ -3,11 +3,24 @@ from rest_framework import urlpatterns, viewsets
 from rest_framework.urlpatterns import format_suffix_patterns
 from .views import FoodViewSet, FoodTypeViewSet, FoodCategoryViewSet, PlateSectionViewSet, PlateLayoutViewSet, PlateViewSet,\
                                 IngredientsViewSet,SubscribeViewSet,SectionLayoutViewSet,BoxViewSet,PlateDrinkViewSet,PlateDessertViewSet,\
-                                PlateFoodViewSet,PlateDaysViewSet,TransactionViewSet,RequestToCancelViewSet
+                                PlateFoodViewSet,PlateDaysViewSet,TransactionViewSet,RequestToCancelViewSet,TakeViewSet
 from food import views
 
 
-# router.register(r'content', views.ContentViewSet)
+
+
+take_list = TakeViewSet.as_view({
+    'get': 'list',
+    'post': 'create'
+})
+
+take_detail = TakeViewSet.as_view({
+    'get': 'retrieve',
+    'put': 'update',
+    'patch': 'partial_update',
+    'delete': 'destroy'
+})
+
 
 request_to_cancel_list = RequestToCancelViewSet.as_view({
     'get': 'list',
@@ -247,6 +260,8 @@ urlpatterns = [
     path('transaction/<int:pk>/',transaction_detail, name='transaction-detail'),
     path('request_to_cancel/', request_to_cancel_list, name='request-to-cancel-list'),
     path('request_to_cancel/<int:pk>/', request_to_cancel_detail, name='request-to-cancel-detail'),
+    path('take/', take_list, name='take-list'),
+    path('take/<int:pk>/', take_detail, name='take-detail'),
     # testing petk uni:
 
     path('add_fave_food', views.add_fave_food, name='add-fave-food'),
