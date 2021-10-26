@@ -219,6 +219,8 @@ class PlateSerializer(serializers.ModelSerializer):
 
     # representation["transaction"] = TransactionSerializer(instance.transacion_subscribe).data
 
+
+
     try:
       representation['description'] = json.loads(instance.description)
     except:
