@@ -9,15 +9,17 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, get_user_model
 from django.urls import reverse_lazy
 from django.views import generic
-from user.serializers import OrganizationSerializer, UserDetailSerializer,UserSerializer
-from user.models import Organization, UserDetail, ConfirmCode,User
+from user.serializers import OrganizationSerializer, UserDetailSerializer,UserSerializer,ContactUsSerializer
+from user.models import Organization, UserDetail, ConfirmCode,User,ContactUs
 from datetime import datetime, timedelta
 import random
 import pytz
 from rest_framework_simplejwt.tokens import RefreshToken
 
 
-
+class ContactUsViewSet(viewsets.ModelViewSet):
+  queryset = ContactUs.objects.all()
+  serializer_class = ContactUsSerializer
 
 class UserDetailViewSet(viewsets.ModelViewSet):
   queryset = UserDetail.objects.all()

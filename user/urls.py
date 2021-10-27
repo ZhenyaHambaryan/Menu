@@ -1,7 +1,7 @@
 from django.urls import path
 from user import views
 from rest_framework.urlpatterns import format_suffix_patterns
-from .views import UserDetailViewSet, OrganizationViewSet, SignUpView
+from .views import UserDetailViewSet, OrganizationViewSet, SignUpView,ContactUsViewSet
 from django.views.generic.base import TemplateView
 from rest_framework_jwt.views import obtain_jwt_token, refresh_jwt_token, verify_jwt_token
 from rest_framework_simplejwt.views import (
@@ -35,6 +35,17 @@ organization_detail = OrganizationViewSet.as_view({
     'patch': 'partial_update',
     'delete': 'destroy'
 })
+contact_us_list = ContactUsViewSet.as_view({
+    'get': 'list',
+    'post': 'create'
+})
+
+contact_us_detail = ContactUsViewSet.as_view({
+    'get': 'retrieve',
+    'put': 'update',
+    'patch': 'partial_update',
+    'delete': 'destroy'
+})
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # URL Patterns
@@ -45,7 +56,9 @@ urlpatterns = [
     path('users/<int:pk>/', user_detail, name='user-detail'),
     path('organizations/', organization_list, name='organization-list'),
     path('organizations/<int:pk>/', organization_detail, name='organization-detail'),
-    
+    path('contact_us/', contact_us_list, name='contact-us-list-list'),
+    path('contact_us/<int:pk>/', contact_us_detail, name='contact-us-detail-detail'),
+
     path('signup/', SignUpView.as_view(), name='signup'),
     path('', TemplateView.as_view(template_name='home.html'), name='home'),
 

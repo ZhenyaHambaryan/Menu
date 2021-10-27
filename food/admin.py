@@ -58,4 +58,6 @@ admin.site.register(Ingredients)
 admin.site.register(PlateSection)
 admin.site.register(PlateLayout)
 admin.site.register(Subscribe)
+admin.site.register(Take)
+
 # Register your models here.

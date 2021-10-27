@@ -1,5 +1,5 @@
 from django.db.models import fields
-from user.models import Organization, UserDetail
+from user.models import Organization, UserDetail,ContactUs
 from rest_framework import serializers
 from django.contrib.auth.models import User
 
@@ -24,4 +24,10 @@ class UserDetailSerializer(serializers.ModelSerializer):
 class OrganizationSerializer(serializers.ModelSerializer):
   class Meta:
     model = Organization
+    fields = '__all__'
+
+
+class ContactUsSerializer(serializers.ModelSerializer):
+  class Meta:
+    model = ContactUs
     fields = '__all__'

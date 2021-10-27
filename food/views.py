@@ -21,6 +21,8 @@ from django.db.models import Sum,F
 class TakeViewSet(viewsets.ModelViewSet):
   queryset = Take.objects.all()
   serializer_class = TakeSerializer
+  filter_backends = [filters.DjangoFilterBackend, SearchFilter]
+  filter_fields = ['date',]
 
 class RequestToCancelViewSet(viewsets.ModelViewSet):
   queryset = RequestToCancel.objects.all()
