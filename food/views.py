@@ -215,6 +215,11 @@ def first(request):
 
     result.append({"plate":{"id":plate.id},"sections":sections})
 
+  # for plate in result:
+  #   for sections in plate:
+  #     for food in sections:
+  #
+
   return Response(result)
   # return Response(TakeSerializer(takes).data)
 

@@ -59,7 +59,7 @@ class ContactUs(models.Model):
 
 class ConfirmCode(models.Model):
   code = models.CharField(max_length=255, blank=False, null=False, primary_key=True)
-  phone_number = models.CharField(null=True,blank=True,max_length=255)
+  # phone_number = models.CharField(null=True,blank=True,max_length=255)
   email = models.CharField(null=True,blank=True,max_length=255)
   created_at = models.DateTimeField(auto_now_add=True)
 

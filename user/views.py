@@ -103,7 +103,7 @@ def create_conf_code(request):
   #   phone_number:       char[]
   #   email:              char[]
 
-  phone_number=request.data['phone_number'].strip()
+  # phone_number=request.data['phone_number'].strip()
   email=request.data['email'].strip()
   errors = []
 
@@ -112,12 +112,12 @@ def create_conf_code(request):
   # v v v v v v v v v v v v v v v v v v v v v v v v v v v v v v v
   if User.objects.filter(email=email).exists():
     errors.append({"message":"Email already registered."})
-  if UserDetail.objects.filter(phone_number=phone_number).exists():
-    errors.append({"message":"Phone number already registered."})
+  # if UserDetail.objects.filter(phone_number=phone_number).exists():
+  #   errors.append({"message":"Phone number already registered."})
   # # #
 
   if len(errors) == 0:
-    old_codes = ConfirmCode.objects.filter(phone_number=phone_number)
+    old_codes = ConfirmCode.objects.filter(email=email)
     if old_codes.count() > 0:
       old_codes.delete()
     while True:
@@ -126,7 +126,7 @@ def create_conf_code(request):
       code.zfill(6)
       if not ConfirmCode.objects.filter(code=code).exists():
         break
-    new_code = ConfirmCode(code=code, phone_number=phone_number, email=email)
+    new_code = ConfirmCode(code=code, email=email)
     new_code.save()
     return Response({"message":"Confirmation code created.",
                      "code": new_code.code,}, status = status.HTTP_201_CREATED)
@@ -147,17 +147,17 @@ def register_user(request):
 
   first_name=request.data['first_name'].strip()
   last_name=request.data['last_name'].strip()
-  username=request.data['email'].strip()
+  # username=request.data['email'].strip()
   password=request.data['password'].strip()
   confirm_password=request.data['confirm_password'].strip()
-  phone_number=request.data['phone_number']
+  # phone_number=request.data['phone_number']
   email=request.data['email'].strip()
   confirm_code=request.data['confirm_code'].strip()
   role_code=request.data['role_code'].strip()
   errors = []
 
-  if len(username)<6:
-    errors.append({"message":"Username must be at least 6 characters."})
+  # if len(username)<6:
+  #   errors.append({"message":"Username must be at least 6 characters."})
   if len(password)<6:
     errors.append({"message":"Password must be at least 6 characters."})
   if password != confirm_password:
@@ -166,13 +166,13 @@ def register_user(request):
     errors.append({"message":"Username is taken."})
   if User.objects.filter(email=email).exists():
     errors.append({"message":"Email already registered."})
-  if UserDetail.objects.filter(phone_number=phone_number).exists():
-    errors.append({"message":"Phone number already registered."})
+  # if UserDetail.objects.filter(phone_number=phone_number).exists():
+  #   errors.append({"message":"Phone number already registered."})
   if not (role_code == "MST" or role_code == "CL"):
     errors.append({"message":"Invalid role code provided."})
   if len(errors)==0:
     try:
-      db_conf_code = ConfirmCode.objects.get(code=confirm_code, phone_number=phone_number)
+      db_conf_code = ConfirmCode.objects.get(code=confirm_code)
 
       if (db_conf_code.created_at + conf_lifespan < datetime.now().replace(tzinfo=pytz.UTC)):
         return Response({'message':"Confirmation code has expired."},status=status.HTTP_400_BAD_REQUEST)
@@ -188,7 +188,7 @@ def register_user(request):
       new_user.save()
       # token = Token.objects.create(user=new_user)
       try:
-        new_user_detail = UserDetail(user=new_user, phone_number=phone_number)
+        new_user_detail = UserDetail(user=new_user)
         if role_code=="MST":
           new_user_detail.is_client=False
           new_user_detail.is_master=True
