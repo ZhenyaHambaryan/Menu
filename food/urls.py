@@ -3,11 +3,22 @@ from rest_framework import urlpatterns, viewsets
 from rest_framework.urlpatterns import format_suffix_patterns
 from .views import FoodViewSet, FoodTypeViewSet, FoodCategoryViewSet, PlateSectionViewSet, PlateLayoutViewSet, PlateViewSet,\
                                 IngredientsViewSet,SubscribeViewSet,SectionLayoutViewSet,BoxViewSet,PlateDrinkViewSet,PlateDessertViewSet,\
-                                PlateFoodViewSet,PlateDaysViewSet,TransactionViewSet,RequestToCancelViewSet,TakeViewSet
+                                PlateFoodViewSet,PlateDaysViewSet,TransactionViewSet,RequestToCancelViewSet,TakeViewSet,TimeIntervalViewSet
 from food import views
 
 
 
+time_interval_list = TimeIntervalViewSet.as_view({
+    'get': 'list',
+    'post': 'create'
+})
+
+time_interval_detail = TimeIntervalViewSet.as_view({
+    'get': 'retrieve',
+    'put': 'update',
+    'patch': 'partial_update',
+    'delete': 'destroy'
+})
 
 take_list = TakeViewSet.as_view({
     'get': 'list',
@@ -262,6 +273,10 @@ urlpatterns = [
     path('request_to_cancel/<int:pk>/', request_to_cancel_detail, name='request-to-cancel-detail'),
     path('take/', take_list, name='take-list'),
     path('take/<int:pk>/', take_detail, name='take-detail'),
+    path('time_interval/', time_interval_list, name='time-interval-list'),
+    path('time_interval/<int:pk>/', time_interval_detail, name='time-interval-detail'),
+    path('first/', views.first, name='first'),
+
     # testing petk uni:
 
     path('add_fave_food', views.add_fave_food, name='add-fave-food'),

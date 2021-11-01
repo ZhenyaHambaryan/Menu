@@ -87,9 +87,9 @@ class PlateLayout(models.Model):
 
 class SectionLayout(models.Model):
   section = models.ForeignKey(PlateSection, on_delete=models.CASCADE, null=True,
-                     blank=True, related_name="section")
+                     blank=True, related_name="section_layout")
   layout = models.ForeignKey(PlateLayout, on_delete=models.CASCADE, null=True,
-                     blank=True, related_name="layout")
+                     blank=True, related_name="layout_section")
 
 
 
@@ -140,6 +140,11 @@ class Subscribe(models.Model):
   comment = models.CharField(null=True,blank=True,max_length=1000)
   price = models.FloatField(null=True, blank=True, default=0.0)
 
+class TimeInterval(models.Model):
+  start_time = models.TimeField(auto_now=False, auto_now_add=False)
+  end_time =models.TimeField(auto_now=False, auto_now_add=False)
+
+
 
 class Transaction(models.Model):
   amount = models.FloatField(null=True)
@@ -163,7 +168,7 @@ class RequestToCancel(models.Model):
 
 class Take(models.Model):
   plate = models.ForeignKey(Plate, blank=True, on_delete=models.CASCADE, null=True, related_name="take_plate")
-  section = models.ForeignKey(PlateSection, on_delete=models.CASCADE, null=True,blank=True, related_name="take_section")
+  section_layout = models.ForeignKey(SectionLayout, on_delete=models.CASCADE, null=True,blank=True, related_name="take_section")
   food =  models.ForeignKey(Food, on_delete=models.CASCADE, null=True, blank=True, related_name="take_food")
   user = models.ForeignKey(User, null=True, on_delete=models.CASCADE, blank=False, related_name="take_user")
   date =  models.DateField()

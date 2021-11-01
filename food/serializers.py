@@ -1,16 +1,20 @@
 from django.db.models import fields
 from food.models import Food, FoodType, FoodCategory, PlateSection, PlateLayout, Plate,Ingredients,Subscribe,\
-                        SectionLayout,Box,PlateDrink,PlateDessert,PlateFood,PlateDays,Transaction,RequestToCancel,Take
+                        SectionLayout,Box,PlateDrink,PlateDessert,PlateFood,PlateDays,Transaction,RequestToCancel,Take,TimeInterval
 from user.serializers import UserDetailSerializer
 from rest_framework import serializers
 from django.contrib.auth.models import User
 import sys,json
 
+class TimeIntervalSerializer(serializers.ModelSerializer):
+  class Meta:
+    model = TimeInterval
+    fields = '__all__'
+
 class TakeSerializer(serializers.ModelSerializer):
   class Meta:
     model = Take
     fields = '__all__'
-
 
 
 class RequestToCancelSerializer(serializers.ModelSerializer):
@@ -161,6 +165,17 @@ class SectionLayoutSerializer(serializers.ModelSerializer):
 
     return representation
 
+class SectionLayoutFullSerializer(serializers.ModelSerializer):
+
+  class Meta:
+    model = SectionLayout
+    fields = '__all__'
+  def to_representation(self, instance):
+    representation = super(SectionLayoutFullSerializer,self).to_representation(instance)
+    representation["section"] = PlateSectionSerializer(instance.section).data
+    representation["layout"] = PlateLayoutSerializer(instance.layout).data
+    representation['foods'] = PlateFoodSerializer(instance.section_layout_plate_food.all(),many=True).data
+    return representation
 
 class PlateDrinkSerializer(serializers.ModelSerializer):
   class Meta:

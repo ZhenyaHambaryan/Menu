@@ -1,5 +1,6 @@
 from django.contrib import admin
-from food.models import FoodCategory,FoodType,Food,Ingredients,PlateSection,PlateLayout,Plate,Subscribe,RequestToCancel,PlateDrink,PlateDessert,PlateFood,Take
+from food.models import FoodCategory,FoodType,Food,Ingredients,PlateSection,PlateLayout,Plate,Subscribe,RequestToCancel,PlateDrink,PlateDessert,\
+                        PlateFood,Take,TimeInterval
 from django.db.models import Count
 from django.db.models import F,Q
 
@@ -59,5 +60,6 @@ admin.site.register(PlateSection)
 admin.site.register(PlateLayout)
 admin.site.register(Subscribe)
 admin.site.register(Take)
+admin.site.register(TimeInterval)
 
 # Register your models here.

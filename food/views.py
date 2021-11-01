@@ -1,21 +1,26 @@
 from user.models import UserDetail
 from django.shortcuts import render
 from rest_framework.response import Response
+from django.http import JsonResponse
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import viewsets, status
 from rest_framework.authtoken.models import Token
 from rest_framework.reverse import reverse
 from food.serializers import FoodSerializer, FoodTypeSerializer, FoodCategorySerializer, PlateSectionSerializer,TransactionSerializer,TakeSerializer, \
-                              PlateLayoutSerializer, PlateSerializer,IngredientsSerializer,SubscribeSerializer,RequestToCancelSerializer,\
-                              SectionLayoutSerializer,BoxSerializer,PlateDrinkSerializer,PlateDessertSerializer,PlateFoodSerializer,PlateDaysSerializer
+                              PlateLayoutSerializer, PlateSerializer,IngredientsSerializer,SubscribeSerializer,RequestToCancelSerializer,TimeIntervalSerializer,\
+                              SectionLayoutSerializer,BoxSerializer,PlateDrinkSerializer,PlateDessertSerializer,PlateFoodSerializer,PlateDaysSerializer,SectionLayoutFullSerializer
 from food.models import Food, FoodType, FoodCategory, PlateSection, PlateLayout, Plate,Ingredients,Subscribe,\
-                        SectionLayout,Box,PlateDrink,PlateDessert,PlateFood,PlateDays,Transaction,RequestToCancel,Take
+                        SectionLayout,Box,PlateDrink,PlateDessert,PlateFood,PlateDays,Transaction,RequestToCancel,Take,TimeInterval
 # import django_filters
 from rest_framework.filters import SearchFilter
 from django_filters import rest_framework as filters
 from rest_framework.pagination import PageNumberPagination
 from django.db.models import Sum,F
+
+class TimeIntervalViewSet(viewsets.ModelViewSet):
+  queryset = TimeInterval.objects.all()
+  serializer_class = TimeIntervalSerializer
 
 
 class TakeViewSet(viewsets.ModelViewSet):
@@ -178,6 +183,40 @@ class SubscribeViewSet(viewsets.ModelViewSet):
     subscribe.price=subscribe.plate.aggregate(sum=Sum('price'))['sum']
     subscribe.save()
     return Response(SubscribeSerializer(subscribe).data)
+
+@api_view(['GET'])
+# @permission_classes([IsAuthenticated])
+def first(request):
+  day=request.GET.get("day")
+  # section_layout = SectionLayout.objects.filter(section_layout_plate_food__plate__days_plate__day=day)
+  # return  Response(SectionLayoutFullSerializer(section_layout,many=True).data)
+  plates=Plate.objects.filter(days_plate__day=day)
+  result=[]
+  for plate in plates:
+    takes_by_plate = Take.objects.filter(plate=plate.id)
+    sections = []
+    for food in plate.food_plate.all():
+      section_id=food.section_layout.id
+      index=-1
+      takes_by_section = takes_by_plate.filter(section_layout_id=section_id)
+      for i, section in enumerate(sections):
+        if section_id == section_id:
+          index=i
+          break
+      # plate_id = plate.id
+      food_id = food.food.id
+      tmp_food = PlateFoodSerializer(food).data
+      takes = takes_by_section.filter(food_id=food_id)
+      tmp_food['quantity'] = tmp_food['count']-takes.count()
+      if index == -1:
+        sections.append({"section_id":section_id, "foods":[tmp_food]})
+      else:
+        sections[index]['foods'].append(tmp_food)
+
+    result.append({"plate":{"id":plate.id},"sections":sections})
+
+  return Response(result)
+  # return Response(TakeSerializer(takes).data)
 
 
 @api_view(['GET'])
