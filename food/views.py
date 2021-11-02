@@ -196,11 +196,11 @@ def first(request):
     takes_by_plate = Take.objects.filter(plate=plate.id)
     sections = []
     for food in plate.food_plate.all():
-      section_id=food.section_layout.id
+      section_layout_id=food.section_layout.id
       index=-1
-      takes_by_section = takes_by_plate.filter(section_layout_id=section_id)
+      takes_by_section = takes_by_plate.filter(section_layout_id=section_layout_id)
       for i, section in enumerate(sections):
-        if section_id == section_id:
+        if section_layout_id == section_layout_id:
           index=i
           break
       # plate_id = plate.id
@@ -209,7 +209,7 @@ def first(request):
       takes = takes_by_section.filter(food_id=food_id)
       tmp_food['quantity'] = tmp_food['count']-takes.count()
       if index == -1:
-        sections.append({"section_id":section_id, "foods":[tmp_food]})
+        sections.append({"section_layout_id":section_layout_id, "foods":[tmp_food]})
       else:
         sections[index]['foods'].append(tmp_food)
 
