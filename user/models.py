@@ -24,28 +24,33 @@ class UserDetail(models.Model):
   address_longitude = models.CharField(null=True,blank=True,max_length=255)
   address_latitude = models.CharField(null=True,blank=True,max_length=255)
   created_at = models.DateTimeField(auto_now_add=True)
-  organizations = models.ManyToManyField('user.Organization', blank=True)
+  # organizations = models.ManyToManyField('user.Organization', blank=True)
   is_client = models.BooleanField(default=True)
   is_master = models.BooleanField(default=False)
-  fave_foods = models.ManyToManyField('food.Food', blank=True)
+  # fave_foods = models.ManyToManyField('food.Food', blank=True)
 
   def __str__(self):
     return self.user.get_full_name()
 
-class Organization(models.Model):
+#
+# class City(models.Model):
+#   city = models.CharField(null=True,blank=True, max_length=255)
+#   city_longitude = models.CharField(null=True,blank=True,max_length=255)
+#   city_latitude = models.CharField(null=True,blank=True,max_length=255)
+
+
+class Team(models.Model):
   name = models.CharField(null=True,blank=True,max_length=255)
-  org_leader = models.ForeignKey(User,null=True,blank=True,on_delete=SET_NULL)
+  org_leader = models.ForeignKey(User,null=True,blank=True,on_delete=CASCADE,related_name="team_user")
   phone_number = models.CharField(null=True,blank=True,max_length=255)
   about = models.CharField(null=True,blank=True,max_length=1000)
   zip_code = models.CharField(null=True,blank=True,max_length=255)
-  city = models.CharField(null=True,blank=True, max_length=255)
-  city_longitude = models.CharField(null=True,blank=True,max_length=255)
-  city_latitude = models.CharField(null=True,blank=True,max_length=255)
   address = models.CharField(null=True,blank=True,max_length=1000)
   address_longitude = models.CharField(null=True,blank=True,max_length=255)
   address_latitude = models.CharField(null=True,blank=True,max_length=255)
   created_at = models.DateTimeField(auto_now_add=True)
-  
+  # city = models.ForeignKey(City,null=True,blank=True,on_delete=CASCADE,related_name="team_city")
+
   def __str__(self):
     return self.name
 

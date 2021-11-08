@@ -1,4 +1,4 @@
-#!/home/annaniks/Documents/menu/env/bin/python3
+#!/home/annaniks/Desktop/Menu1/env/bin/python3
 # When the django-admin.py deprecation ends, remove this script.
 import warnings
 

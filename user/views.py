@@ -9,12 +9,16 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, get_user_model
 from django.urls import reverse_lazy
 from django.views import generic
-from user.serializers import OrganizationSerializer, UserDetailSerializer,UserSerializer,ContactUsSerializer
-from user.models import Organization, UserDetail, ConfirmCode,User,ContactUs
+from user.serializers import  UserDetailSerializer,UserSerializer,ContactUsSerializer,TeamSerializer
+from user.models import  UserDetail, ConfirmCode,User,ContactUs,Team
 from datetime import datetime, timedelta
 import random
 import pytz
 from rest_framework_simplejwt.tokens import RefreshToken
+
+# class CityViewSet(viewsets.ModelViewSet):
+#   queryset = City.objects.all()
+#   serializer_class = CitySerializer
 
 
 class ContactUsViewSet(viewsets.ModelViewSet):
@@ -25,9 +29,9 @@ class UserDetailViewSet(viewsets.ModelViewSet):
   queryset = UserDetail.objects.all()
   serializer_class = UserDetailSerializer
 
-class OrganizationViewSet(viewsets.ModelViewSet):
-  queryset = Organization.objects.all()
-  serializer_class = OrganizationSerializer
+class TeamViewSet(viewsets.ModelViewSet):
+  queryset = Team.objects.all()
+  serializer_class = TeamSerializer
 
 class SignUpView(generic.CreateView):
   form_class = UserCreationForm
@@ -134,6 +138,7 @@ def create_conf_code(request):
   else:
     return Response(errors, status = status.HTTP_400_BAD_REQUEST)
 
+
 @api_view(['POST'])
 def register_user(request):
   # request:
@@ -211,7 +216,6 @@ def register_user(request):
       return Response({'message':"Confirmation code is incorrect."},status=status.HTTP_400_BAD_REQUEST)
   else:
     return Response(errors, status=status.HTTP_400_BAD_REQUEST)
-
 @api_view(['PATCH'])
 @permission_classes([IsAuthenticated])
 def update_profile(request):

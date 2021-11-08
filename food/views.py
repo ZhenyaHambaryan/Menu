@@ -186,12 +186,13 @@ class SubscribeViewSet(viewsets.ModelViewSet):
 
 @api_view(['GET'])
 # @permission_classes([IsAuthenticated])
-def first(request):
+def filtered_foods(request):
   day=request.GET.get("day")
   # section_layout = SectionLayout.objects.filter(section_layout_plate_food__plate__days_plate__day=day)
   # return  Response(SectionLayoutFullSerializer(section_layout,many=True).data)
   plates=Plate.objects.filter(days_plate__day=day)
   result=[]
+  choosed_foods=[]
   for plate in plates:
     takes_by_plate = Take.objects.filter(plate=plate.id)
     sections = []
@@ -213,15 +214,77 @@ def first(request):
       else:
         sections[index]['foods'].append(tmp_food)
 
+    for section in sections:
+      max_count=0
+      for food in section['foods']:
+        if max_count<food['quantity']:
+          max_count=food['quantity']
+      filtered_foods = []
+      for food in section['foods']:
+        if food['quantity'] == max_count:
+          filtered_foods.append(food)
+      if len(filtered_foods) == 1:
+        choosed_foods.append(filtered_foods[0]['food']['id'])
+      section['filtered_foods']=filtered_foods
     result.append({"plate":{"id":plate.id},"sections":sections})
 
-  # for plate in result:
-  #   for sections in plate:
-  #     for food in sections:
-  #
-
+    for plate in result:
+      for section in plate['sections']:
+        if len(section['filtered_foods']) >1:
+          filtered_foods = []
+          for food in section['filtered_foods']:
+            if food['food']['id'] in choosed_foods:
+              filtered_foods.append(food)
+              break
+          if len(filtered_foods)==0:
+            filtered_foods.append(section['filtered_foods'][0])
+            choosed_foods.append(filtered_foods[0]['food']['id'])
+        section['filtered_foods'] = filtered_foods
   return Response(result)
   # return Response(TakeSerializer(takes).data)
+
+@api_view(['GET'])
+# @permission_classes([IsAuthenticated])
+def filtered_drinks(request):
+  day = request.GET.get("day")
+  plates = Plate.objects.filter(days_plate__day=day)
+  result = []
+  choosed_drinks = []
+  for plate in plates:
+    takes_by_plate = Take.objects.filter(plate=plate.id)
+    drinks=[]
+    for drink in plate.drink_plate.all():
+      drink_id=drink.drink.id
+      tmp_food = PlateDrinkSerializer(drink).data
+      takes = takes_by_plate.filter(food_id=drink_id)
+      tmp_food['quantity'] = tmp_food['count']-takes.count()
+      drinks.append(tmp_food)
+
+      max_count = 0
+      for drink in drinks:
+        if max_count < drink['quantity']:
+          max_count = drink['quantity']
+      filtered_drinks = []
+      for drink in drinks:
+        if drink['quantity'] == max_count:
+          filtered_drinks.append(drink)
+      if len(filtered_drinks) == 1:
+        choosed_drinks.append(filtered_drinks[0]['drink'])
+
+
+    result.append({"plate":{"id":plate.id},"drinks":drinks,"filtered_drinks":filtered_drinks})
+    for drinks in result:
+        if len(drinks["filtered_drinks"]) > 1:
+          filtered_drinks = []
+          for drink in drinks['filtered_drinks']:
+            if drink['drink']['id'] in choosed_drinks:
+              filtered_drinks.append(drink)
+              break
+          if len(filtered_drinks) == 0:
+            filtered_drinks.append(drinks['filtered_drinks'][0])
+            choosed_drinks.append(filtered_drinks[0]['drink']['id'])
+  return Response(result)
+
 
 
 @api_view(['GET'])
@@ -235,43 +298,43 @@ def api_root(request, format=None):
     'plates': reverse('plate-list', request=request, format=format),
   })
 
-@api_view(['PATCH'])
-@permission_classes([IsAuthenticated])
-def add_fave_food(request):
-  # request:
-  #   food_id:    int, primary key of Food to be favorited
-
-  try:
-    user_detail = UserDetail.objects.get(user=request.user)
-    food_id = request.data['food_id']
-    food = Food.objects.get(id=food_id)
-
-    if user_detail.fave_foods.filter(id=food_id).exists():
-      return Response({"message":"This food already favorited."}, status=status.HTTP_200_OK)
-
-    user_detail.fave_foods.add(food)
-    return Response({"message":"Succesfully favorited food."}, status=status.HTTP_200_OK)
-    
-  except:
-    return Response({"message":"Unable to add favorite food."}, status=status.HTTP_400_BAD_REQUEST)
-
-@api_view(['PATCH'])
-@permission_classes([IsAuthenticated])
-def remove_fave_food(request):
-  # request:
-  #   food_id:    int, primary key of Food to be favorited
-
-  try:
-    user_detail = UserDetail.objects.get(user=request.user)
-    food_id = request.data['food_id']
-    food = Food.objects.get(id=food_id)
-
-    if not user_detail.fave_foods.filter(id=food_id).exists():
-      return Response({"message":"This food not favorited."}, status=status.HTTP_200_OK)
-
-    user_detail.fave_foods.remove(food)
-    return Response({"message":"Succesfully favorited food."}, status=status.HTTP_200_OK)
-
-  except:
-    return Response({"message":"Unable to add favorite food."}, status=status.HTTP_400_BAD_REQUEST)
-
+# @api_view(['PATCH'])
+# @permission_classes([IsAuthenticated])
+# def add_fave_food(request):
+#   # request:
+#   #   food_id:    int, primary key of Food to be favorited
+#
+#   try:
+#     user_detail = UserDetail.objects.get(user=request.user)
+#     food_id = request.data['food_id']
+#     food = Food.objects.get(id=food_id)
+#
+#     if user_detail.fave_foods.filter(id=food_id).exists():
+#       return Response({"message":"This food already favorited."}, status=status.HTTP_200_OK)
+#
+#     user_detail.fave_foods.add(food)
+#     return Response({"message":"Succesfully favorited food."}, status=status.HTTP_200_OK)
+#
+#   except:
+#     return Response({"message":"Unable to add favorite food."}, status=status.HTTP_400_BAD_REQUEST)
+#
+# @api_view(['PATCH'])
+# @permission_classes([IsAuthenticated])
+# def remove_fave_food(request):
+#   # request:
+#   #   food_id:    int, primary key of Food to be favorited
+#
+#   try:
+#     user_detail = UserDetail.objects.get(user=request.user)
+#     food_id = request.data['food_id']
+#     food = Food.objects.get(id=food_id)
+#
+#     if not user_detail.fave_foods.filter(id=food_id).exists():
+#       return Response({"message":"This food not favorited."}, status=status.HTTP_200_OK)
+#
+#     user_detail.fave_foods.remove(food)
+#     return Response({"message":"Succesfully favorited food."}, status=status.HTTP_200_OK)
+#
+#   except:
+#     return Response({"message":"Unable to add favorite food."}, status=status.HTTP_400_BAD_REQUEST)
+#

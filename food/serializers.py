@@ -183,9 +183,7 @@ class PlateDrinkSerializer(serializers.ModelSerializer):
     fields = '__all__'
   def to_representation(self, instance):
     representation = super(PlateDrinkSerializer,self).to_representation(instance)
-    # representation["plate"] = PlateSerializer(instance.drink_plate).data
-    representation["drink"] = FoodSerializer(instance.drink).data
-    # representation["dessert"] = FoodSerializer(instance.dessert).data
+    # representation["drink"] = FoodSerializer(instance.drink).data
 
 
     return representation
@@ -231,10 +229,6 @@ class PlateSerializer(serializers.ModelSerializer):
     representation["dessert"] = PlateDessertSerializer(instance.dessert_plate,many=True).data
     representation["food"] = PlateFoodSerializer(instance.food_plate,many=True).data
     representation["days"] = PlateDaysSerializer(instance.days_plate,many=True).data
-
-    # representation["transaction"] = TransactionSerializer(instance.transacion_subscribe).data
-
-
 
     try:
       representation['description'] = json.loads(instance.description)

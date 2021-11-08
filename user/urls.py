@@ -1,7 +1,7 @@
 from django.urls import path
 from user import views
 from rest_framework.urlpatterns import format_suffix_patterns
-from .views import UserDetailViewSet, OrganizationViewSet, SignUpView,ContactUsViewSet
+from .views import UserDetailViewSet, SignUpView,ContactUsViewSet,TeamViewSet
 from django.views.generic.base import TemplateView
 from rest_framework_jwt.views import obtain_jwt_token, refresh_jwt_token, verify_jwt_token
 from rest_framework_simplejwt.views import (
@@ -24,12 +24,12 @@ user_detail = UserDetailViewSet.as_view({
     'delete': 'destroy'
 })
 
-organization_list = OrganizationViewSet.as_view({
+team_list = TeamViewSet.as_view({
     'get': 'list',
     'post': 'create'
 })
 
-organization_detail = OrganizationViewSet.as_view({
+team_detail = TeamViewSet.as_view({
     'get': 'retrieve',
     'put': 'update',
     'patch': 'partial_update',
@@ -46,6 +46,17 @@ contact_us_detail = ContactUsViewSet.as_view({
     'patch': 'partial_update',
     'delete': 'destroy'
 })
+# city_list = CityViewSet.as_view({
+#     'get': 'list',
+#     'post': 'create'
+# })
+#
+# city_detail = CityViewSet.as_view({
+#     'get': 'retrieve',
+#     'put': 'update',
+#     'patch': 'partial_update',
+#     'delete': 'destroy'
+# })
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # URL Patterns
@@ -54,10 +65,12 @@ urlpatterns = [
     path('user/api', views.api_root),
     path('users/', user_list, name='user-list'),
     path('users/<int:pk>/', user_detail, name='user-detail'),
-    path('organizations/', organization_list, name='organization-list'),
-    path('organizations/<int:pk>/', organization_detail, name='organization-detail'),
+    path('team/', team_list, name='team-list'),
+    path('team/<int:pk>/', team_detail, name='team-detail'),
     path('contact_us/', contact_us_list, name='contact-us-list-list'),
-    path('contact_us/<int:pk>/', contact_us_detail, name='contact-us-detail-detail'),
+    path('contact_us/<int:pk>/', contact_us_detail, name='contact-us-detail'),
+    # path('city/', city_list, name='city-list'),
+    # path('city/<int:pk>/', city_detail, name='city-detail'),
 
     path('signup/', SignUpView.as_view(), name='signup'),
     path('', TemplateView.as_view(template_name='home.html'), name='home'),

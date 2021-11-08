@@ -1,9 +1,10 @@
 # from user.views import delete_org
 from django.db import models
 from django.contrib.auth.models import User
+# from user.models import City
 from django.db.models.base import Model
 from django.db.models.deletion import CASCADE, PROTECT, SET_NULL
-# from django.db.models import Sum
+
 
 
 REQUEST_STATUS=[
@@ -133,6 +134,7 @@ class PlateDays(models.Model):
 
 class Subscribe(models.Model):
   plate = models.ManyToManyField(Plate, related_name="subscribe_plate")
+  # city = models.ForeignKey(City, on_delete=models.CASCADE, null=True,blank=True, related_name="subscribe_city")
   day_count = models.IntegerField(default=0)
   address = models.CharField(null=True,blank=True,max_length=1000)
   address_longitude = models.CharField(null=True,blank=True,max_length=255)

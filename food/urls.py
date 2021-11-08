@@ -275,12 +275,13 @@ urlpatterns = [
     path('take/<int:pk>/', take_detail, name='take-detail'),
     path('time_interval/', time_interval_list, name='time-interval-list'),
     path('time_interval/<int:pk>/', time_interval_detail, name='time-interval-detail'),
-    path('first/', views.first, name='first'),
+    path('filtered_foods/', views.filtered_foods, name='filtered_foods'),
+    path('filtered_drinks/', views.filtered_drinks, name='filtered_drinks'),
 
     # testing petk uni:
 
-    path('add_fave_food', views.add_fave_food, name='add-fave-food'),
-    path('remove_fave_food', views.remove_fave_food, name='remove-fave-food'),
+    # path('add_fave_food', views.add_fave_food, name='add-fave-food'),
+    # path('remove_fave_food', views.remove_fave_food, name='remove-fave-food'),
 # <<<<<<< HEAD
     # path('create_plate', views.create_plate, name='create-plate'),
 # =======

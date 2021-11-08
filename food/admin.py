@@ -61,5 +61,6 @@ admin.site.register(PlateLayout)
 admin.site.register(Subscribe)
 admin.site.register(Take)
 admin.site.register(TimeInterval)
+admin.site.register(PlateDrink)
 
 # Register your models here.

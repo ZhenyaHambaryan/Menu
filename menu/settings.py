@@ -11,9 +11,10 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
-import datetime
-from datetime import timedelta
+# import datetime
+from datetime import datetime,timedelta
 import os
+# from user.models import UserDetail
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -53,6 +54,9 @@ INSTALLED_APPS = [
     'files',
 
 ]
+
+# AUTH_USER_MODEL = "user.UserDetail"
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -112,7 +116,7 @@ WSGI_APPLICATION = 'menu.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
-
+#
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.mysql',
