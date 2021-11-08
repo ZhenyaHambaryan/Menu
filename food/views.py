@@ -178,7 +178,7 @@ class SubscribeViewSet(viewsets.ModelViewSet):
     subscribe = Subscribe(day_count=request.data['day_count'],address=request.data['address'],address_longitude=request.data['address_longitude'],
                           address_latitude=request.data['address_latitude'],comment=request.data['comment'])
     subscribe.save()
-    for i in request.data['plate_id']:
+    for i in request.data['plate']:
       sub=subscribe.plate.add(i)
     subscribe.price=subscribe.plate.aggregate(sum=Sum('price'))['sum']
     subscribe.save()
@@ -285,6 +285,47 @@ def filtered_drinks(request):
             choosed_drinks.append(filtered_drinks[0]['drink']['id'])
   return Response(result)
 
+@api_view(['GET'])
+# @permission_classes([IsAuthenticated])
+def filtered_desserts(request):
+  day = request.GET.get("day")
+  plates = Plate.objects.filter(days_plate__day=day)
+  result = []
+  choosed_desserts = []
+  for plate in plates:
+    takes_by_plate = Take.objects.filter(plate=plate.id)
+    desserts=[]
+    for dessert in plate.dessert_plate.all():
+      dessert_id=dessert.dessert.id
+      tmp_food = PlateDessertSerializer(dessert).data
+      takes = takes_by_plate.filter(food_id=dessert_id)
+      tmp_food['quantity'] = tmp_food['count']-takes.count()
+      desserts.append(tmp_food)
+
+      max_count = 0
+      for dessert in desserts:
+        if max_count < dessert['quantity']:
+          max_count = dessert['quantity']
+      filtered_desserts = []
+      for dessert in desserts:
+        if dessert['quantity'] == max_count:
+          filtered_desserts.append(dessert)
+      if len(filtered_desserts) == 1:
+        choosed_desserts.append(filtered_desserts[0]['dessert'])
+
+
+    result.append({"plate":{"id":plate.id},"desserts":desserts,"filtered_desserts":filtered_desserts})
+    for desserts in result:
+        if len(desserts["filtered_desserts"]) > 1:
+          filtered_desserts = []
+          for dessert in drinks['filtered_desserts']:
+            if dessert['dessert']['id'] in choosed_desserts:
+              filtered_desserts.append(drink)
+              break
+          if len(filtered_desserts) == 0:
+            filtered_desserts.append(drinks['filtered_desserts'][0])
+            choosed_desserts.append(filtered_desserts[0]['dessert']['id'])
+  return Response(result)
 
 
 @api_view(['GET'])

@@ -52,6 +52,13 @@ def api_root(request, format=None):
 conf_lifespan = timedelta(minutes=5)
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_me(request):
+    return Response(UserDetailSerializer(UserDetail.objects.get(user_id=request.user.id)).data,
+                                    status=status.HTTP_200_OK)
+
+
 @api_view(['POST'])
 def user_login(request):
   # request: 
@@ -532,8 +539,3 @@ def delete_org(request):
   except:
     return Response({"message":"Unable to delete organization."}, status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def get_me(request):
-    return Response(UserSerializer(User.objects.get(id=request.user.id)).data,
-                                    status=status.HTTP_200_OK)
