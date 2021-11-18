@@ -278,6 +278,7 @@ urlpatterns = [
     path('filtered_foods/', views.filtered_foods, name='filtered_foods'),
     path('filtered_drinks/', views.filtered_drinks, name='filtered_drinks'),
     path('filtered_desserts/', views.filtered_desserts, name='filtered_desserts'),
+    path('filtered_all/', views.filtered_all, name='filtered_all'),
 
     # testing petk uni:
 

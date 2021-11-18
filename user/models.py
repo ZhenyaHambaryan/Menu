@@ -2,6 +2,12 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.deletion import CASCADE, PROTECT, SET_NULL
 
+TEAM_STATUS=[
+  ("pending", 'в ожидании'),
+  ("accepted",'принято'),
+  ("canceled",'отменено'),
+  ("rejected",'отклоненный')
+]
 
 class UserDetail(models.Model):
   # Django default User model contains:
@@ -41,7 +47,7 @@ class UserDetail(models.Model):
 
 class Team(models.Model):
   name = models.CharField(null=True,blank=True,max_length=255)
-  org_leader = models.ForeignKey(User,null=True,blank=True,on_delete=CASCADE,related_name="team_user")
+  team_leader = models.ForeignKey(User,null=True,blank=True,on_delete=CASCADE,related_name="team_user")
   phone_number = models.CharField(null=True,blank=True,max_length=255)
   about = models.CharField(null=True,blank=True,max_length=1000)
   zip_code = models.CharField(null=True,blank=True,max_length=255)
@@ -53,6 +59,22 @@ class Team(models.Model):
 
   def __str__(self):
     return self.name
+
+class RequestTeam(models.Model):
+  user = models.ForeignKey(User,null=True,blank=True,on_delete=CASCADE,related_name="user_request")
+  team = models.ForeignKey(Team,null=True,blank=True,on_delete=CASCADE,related_name="team_request")
+  status = models.CharField(max_length=255, null=True, blank=True,default='pending',  choices=TEAM_STATUS)
+
+
+
+
+class UserTeam(models.Model):
+  user = models.ForeignKey(User,null=True,blank=True,on_delete=CASCADE,related_name="user_team")
+  team = models.ForeignKey(Team,null=True,blank=True,on_delete=CASCADE,related_name="team_user")
+  # user_status = models.CharField(max_length=255, null=True, blank=True, choices=TEAM_STATUS)
+
+
+
 
 class ContactUs(models.Model):
   name = models.CharField(null=True,blank=True,max_length=255)

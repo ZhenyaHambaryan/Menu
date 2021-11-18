@@ -9,8 +9,8 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, get_user_model
 from django.urls import reverse_lazy
 from django.views import generic
-from user.serializers import  UserDetailSerializer,UserSerializer,ContactUsSerializer,TeamSerializer
-from user.models import  UserDetail, ConfirmCode,User,ContactUs,Team
+from user.serializers import  UserDetailSerializer,UserSerializer,ContactUsSerializer,TeamSerializer,UserTeamSerializer,RequestTeamSerializer
+from user.models import  UserDetail, ConfirmCode,User,ContactUs,Team,UserTeam,RequestTeam
 from datetime import datetime, timedelta
 import random
 import pytz
@@ -20,6 +20,28 @@ from rest_framework_simplejwt.tokens import RefreshToken
 #   queryset = City.objects.all()
 #   serializer_class = CitySerializer
 
+class RequestTeamViewSet(viewsets.ModelViewSet):
+  queryset = RequestTeam.objects.all()
+  serializer_class = RequestTeamSerializer
+
+  def update(self,request,pk):
+    requestteam = RequestTeam.objects.get(id=pk)
+    status = request.data['status']
+    if status == "accepted":
+      # uset_team=UserTeam.objects.get(user_id=request.data['user_id'], team_id=request.data['team_id'])
+      # if user_team.count()>0:
+      #   return Response(UserTeamSerializer)
+      user_team = UserTeam(user_id=request.data['user_id'], team_id=request.data['team_id'])
+      user_team.save()
+
+    requestteam.status=status
+    requestteam.save()
+    return Response(RequestTeamSerializer(requestteam).data)
+
+
+class UserTeamViewSet(viewsets.ModelViewSet):
+  queryset = UserTeam.objects.all()
+  serializer_class = UserTeamSerializer
 
 class ContactUsViewSet(viewsets.ModelViewSet):
   queryset = ContactUs.objects.all()
@@ -37,6 +59,14 @@ class SignUpView(generic.CreateView):
   form_class = UserCreationForm
   success_url = reverse_lazy('login')
   template_name = 'registration/signup.html'
+#
+# @api_view(['POST'])
+# def team_status(request):
+#   status= request.data['status']
+#   if status == "accepted":
+#     user_team = UserTeam(user_id=request.data['user_id'],team_id=request.data['team_id'])
+#   return Response(UserTeamSerializer(user_team).data)
+#
 
 @api_view(['GET'])
 def api_root(request, format=None):

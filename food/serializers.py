@@ -46,6 +46,7 @@ class FoodCategorySerializer(serializers.ModelSerializer):
     return representation
 
 
+
 class FoodTypeSerializer(serializers.ModelSerializer):
   # food_category = FoodCategorySerializer()
   class Meta:

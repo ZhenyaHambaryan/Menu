@@ -1,7 +1,7 @@
 from django.urls import path
 from user import views
 from rest_framework.urlpatterns import format_suffix_patterns
-from .views import UserDetailViewSet, SignUpView,ContactUsViewSet,TeamViewSet
+from .views import UserDetailViewSet, SignUpView,ContactUsViewSet,TeamViewSet,UserTeamViewSet,RequestTeamViewSet
 from django.views.generic.base import TemplateView
 from rest_framework_jwt.views import obtain_jwt_token, refresh_jwt_token, verify_jwt_token
 from rest_framework_simplejwt.views import (
@@ -24,6 +24,18 @@ user_detail = UserDetailViewSet.as_view({
     'delete': 'destroy'
 })
 
+user_team_list = UserTeamViewSet.as_view({
+    'get': 'list',
+    'post': 'create'
+})
+
+user_team_detail = UserTeamViewSet.as_view({
+    'get': 'retrieve',
+    'put': 'update',
+    'patch': 'partial_update',
+    'delete': 'destroy'
+})
+
 team_list = TeamViewSet.as_view({
     'get': 'list',
     'post': 'create'
@@ -35,6 +47,19 @@ team_detail = TeamViewSet.as_view({
     'patch': 'partial_update',
     'delete': 'destroy'
 })
+
+request_team_list = RequestTeamViewSet.as_view({
+    'get': 'list',
+    'post': 'create'
+})
+
+request_team_detail = RequestTeamViewSet.as_view({
+    'get': 'retrieve',
+    'put': 'update',
+    'patch': 'partial_update',
+    'delete': 'destroy'
+})
+
 contact_us_list = ContactUsViewSet.as_view({
     'get': 'list',
     'post': 'create'
@@ -67,6 +92,10 @@ urlpatterns = [
     path('users/<int:pk>/', user_detail, name='user-detail'),
     path('team/', team_list, name='team-list'),
     path('team/<int:pk>/', team_detail, name='team-detail'),
+    path('request_team/', request_team_list, name='request-team-list'),
+    path('request_team/<int:pk>/', request_team_detail, name='request-team-detail'),
+    path('user_team/', user_team_list, name='user-team-list'),
+    path('user_team/<int:pk>/', user_team_detail, name='user-team-detail'),
     path('contact_us/', contact_us_list, name='contact-us-list-list'),
     path('contact_us/<int:pk>/', contact_us_detail, name='contact-us-detail'),
     # path('city/', city_list, name='city-list'),
@@ -100,6 +129,7 @@ urlpatterns = [
     path('update_org_info', views.update_org_info, name="update-org-info"),
     path('delete_org', views.delete_org, name="delete-org"),
     path('get_me', views.get_me,name="get-me"),
+    # path('team_status', views.team_status, name="team_status"),
 
     # chi sksvac:
 

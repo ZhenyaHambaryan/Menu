@@ -184,6 +184,135 @@ class SubscribeViewSet(viewsets.ModelViewSet):
     subscribe.save()
     return Response(SubscribeSerializer(subscribe).data)
 
+
+@api_view(['GET'])
+def filtered_all(request):
+  day = request.GET.get("day")
+  plates=Plate.objects.filter(days_plate__day=day)
+  result=[]
+  choosed_foods=[]
+  choosed_drinks=[]
+  choosed_desserts=[]
+  # ~~~~~~~~~~~~~~~~~~food~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  for plate in plates:
+    takes_by_plate = Take.objects.filter(plate=plate.id)
+    sections = []
+    drinks=[]
+    desserts=[]
+    for food in plate.food_plate.all():
+      section_layout_id=food.section_layout.id
+      index=-1
+      takes_by_section = takes_by_plate.filter(section_layout_id=section_layout_id)
+      for i, section in enumerate(sections):
+        if section_layout_id == section_layout_id:
+          index=i
+          break
+      # plate_id = plate.id
+      food_id = food.food.id
+      tmp_food = PlateFoodSerializer(food).data
+      takes = takes_by_section.filter(food_id=food_id)
+      tmp_food['quantity'] = tmp_food['count']-takes.count()
+      if index == -1:
+        sections.append({"section_layout_id":section_layout_id, "foods":[tmp_food]})
+      else:
+        sections[index]['foods'].append(tmp_food)
+
+    for section in sections:
+      max_count=0
+      for food in section['foods']:
+        if max_count<food['quantity']:
+          max_count=food['quantity']
+      filtered_foods = []
+      for food in section['foods']:
+        if food['quantity'] == max_count:
+          filtered_foods.append(food)
+      if len(filtered_foods) == 1:
+        choosed_foods.append(filtered_foods[0]['food']['id'])
+      section['filtered_foods']=filtered_foods
+# ~~~~~~~~~~~~~~~~~~~~~~~~drink~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    for drink in plate.drink_plate.all():
+      drink_id=drink.drink.id
+      tmp_food = PlateDrinkSerializer(drink).data
+      takes = takes_by_plate.filter(food_id=drink_id)
+      tmp_food['quantity'] = tmp_food['count']-takes.count()
+      drinks.append(tmp_food)
+
+      max_count = 0
+      for drink in drinks:
+        if max_count < drink['quantity']:
+          max_count = drink['quantity']
+      filtered_drinks = []
+      for drink in drinks:
+        if drink['quantity'] == max_count:
+          filtered_drinks.append(drink)
+      if len(filtered_drinks) == 1:
+        choosed_drinks.append(filtered_drinks[0]['drink'])
+# ~~~~~~~~~~~~~~~~~~~~~~~~dessert~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    for dessert in plate.dessert_plate.all():
+      dessert_id = dessert.dessert.id
+      tmp_food = PlateDessertSerializer(dessert).data
+      takes = takes_by_plate.filter(food_id=dessert_id)
+      tmp_food['quantity'] = tmp_food['count'] - takes.count()
+      desserts.append(tmp_food)
+
+      max_count = 0
+      for dessert in desserts:
+        if max_count < dessert['quantity']:
+          max_count = dessert['quantity']
+      filtered_desserts = []
+      for dessert in desserts:
+        if dessert['quantity'] == max_count:
+          filtered_desserts.append(dessert)
+      if len(filtered_desserts) == 1:
+        choosed_desserts.append(filtered_desserts[0]['dessert'])
+
+    result.append({"plate":{"id":plate.id},"filtered_foods":filtered_foods,"filtered_drinks":filtered_drinks,"filtered_desserts":filtered_desserts})
+
+    for plate in result:
+      # for section in plate['sections']:
+        if len(section['filtered_foods']) >1:
+          filtered_foods = []
+          for food in section['filtered_foods']:
+            if food['food']['id'] in choosed_foods:
+              filtered_foods.append(food)
+              break
+          if len(filtered_foods)==0:
+            filtered_foods.append(section['filtered_foods'][0])
+            choosed_foods.append(filtered_foods[0]['food']['id'])
+        section['filtered_foods'] = filtered_foods
+
+    for drinks in result:
+      if len(drinks["filtered_drinks"]) > 1:
+        filtered_drinks = []
+        for drink in drinks['filtered_drinks']:
+          if drink['drink']['id'] in choosed_drinks:
+            filtered_drinks.append(drink)
+            break
+        if len(filtered_drinks) == 0:
+          filtered_drinks.append(drinks['filtered_drinks'][0])
+          choosed_drinks.append(filtered_drinks[0]['drink']['id'])
+
+    for desserts in result:
+      if len(desserts["filtered_desserts"]) > 1:
+        filtered_desserts = []
+        for dessert in drinks['filtered_desserts']:
+          if dessert['dessert']['id'] in choosed_desserts:
+            filtered_desserts.append(drink)
+            break
+        if len(filtered_desserts) == 0:
+          filtered_desserts.append(drinks['filtered_desserts'][0])
+          choosed_desserts.append(filtered_desserts[0]['dessert']['id'])
+
+  return Response(result)
+# ~~~~~~~~~~~~~~~~~~~~~~~~dessert~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+
+
+
+
+
 @api_view(['GET'])
 # @permission_classes([IsAuthenticated])
 def filtered_foods(request):
@@ -316,15 +445,15 @@ def filtered_desserts(request):
 
     result.append({"plate":{"id":plate.id},"desserts":desserts,"filtered_desserts":filtered_desserts})
     for desserts in result:
-        if len(desserts["filtered_desserts"]) > 1:
-          filtered_desserts = []
-          for dessert in drinks['filtered_desserts']:
-            if dessert['dessert']['id'] in choosed_desserts:
-              filtered_desserts.append(drink)
-              break
-          if len(filtered_desserts) == 0:
-            filtered_desserts.append(drinks['filtered_desserts'][0])
-            choosed_desserts.append(filtered_desserts[0]['dessert']['id'])
+      if len(desserts["filtered_desserts"]) > 1:
+        filtered_desserts = []
+        for dessert in drinks['filtered_desserts']:
+          if dessert['dessert']['id'] in choosed_desserts:
+            filtered_desserts.append(drink)
+            break
+        if len(filtered_desserts) == 0:
+          filtered_desserts.append(drinks['filtered_desserts'][0])
+          choosed_desserts.append(filtered_desserts[0]['dessert']['id'])
   return Response(result)
 
 

@@ -147,7 +147,6 @@ class TimeInterval(models.Model):
   end_time =models.TimeField(auto_now=False, auto_now_add=False)
 
 
-
 class Transaction(models.Model):
   amount = models.FloatField(null=True)
   payment_id = models.CharField(null=True, max_length=1000, blank=True)
