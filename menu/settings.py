@@ -114,6 +114,13 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 WSGI_APPLICATION = 'menu.wsgi.application'
 
+EMAIL_BACKEND ="django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = "beatycoreemail@gmail.com"
+EMAIL_HOST_PASSWORD = "annaniks00"
+EMAIL_FROM = "beatycoreemail@gmail.com"
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases

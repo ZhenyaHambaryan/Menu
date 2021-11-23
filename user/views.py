@@ -15,6 +15,8 @@ from datetime import datetime, timedelta
 import random
 import pytz
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.core.mail import EmailMultiAlternatives
+
 
 # class CityViewSet(viewsets.ModelViewSet):
 #   queryset = City.objects.all()
@@ -80,6 +82,14 @@ def api_root(request, format=None):
 
 # Period of time that a confirmation code remains valid:
 conf_lifespan = timedelta(minutes=5)
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+def send_email(subject, to_email, text):
+  text_content = 'This is an important message.'
+  msg = EmailMultiAlternatives(subject, text_content, 'beatycoreemail@gmail.com', [to_email])
+  msg.attach_alternative(text, "text/html")
+  msg.send()
+
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 @api_view(['GET'])
@@ -169,8 +179,11 @@ def create_conf_code(request):
         break
     new_code = ConfirmCode(code=code, email=email)
     new_code.save()
+    send_email('Գրանցման կոդը', f'{new_code.email}',f'{new_code.code}')
+
     return Response({"message":"Confirmation code created.",
                      "code": new_code.code,}, status = status.HTTP_201_CREATED)
+
     # return Response({"message":"Confirmation code created."}, status = status.HTTP_201_CREATED)
   else:
     return Response(errors, status = status.HTTP_400_BAD_REQUEST)
