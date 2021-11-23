@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'user',
     'food',
     'files',
+    'utils',
 
 ]
 
@@ -128,7 +129,7 @@ WSGI_APPLICATION = 'menu.wsgi.application'
 #         'OPTIONS': {}
 #     }
 # }
-
+#
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',

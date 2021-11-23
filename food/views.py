@@ -184,6 +184,15 @@ class SubscribeViewSet(viewsets.ModelViewSet):
     subscribe.save()
     return Response(SubscribeSerializer(subscribe).data)
 
+  def get_queryset(self):
+    from_date = self.request.query_params.get('from_date')
+    to_date = self.request.query_params.get('to_date')
+    queryset = Subscribe.objects.all()
+    if from_date and to_date is not None:
+      queryset = queryset.filter(plate__days_plate__day__gte=from_date,
+                                 plate__days_plate__day__lte=to_date)
+    return queryset
+
 
 @api_view(['GET'])
 def filtered_all(request):
