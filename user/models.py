@@ -93,3 +93,8 @@ class ConfirmCode(models.Model):
   def __str__(self):
     return self.code
 
+class RecoverEmail(models.Model):
+  token = models.CharField(max_length=255, blank=False, null=False, primary_key=True)
+  email = models.CharField(null=True,blank=True,max_length=255)
+  created_at = models.DateTimeField(auto_now_add=True)
+

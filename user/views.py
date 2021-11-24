@@ -4,13 +4,14 @@ from rest_framework.reverse import reverse
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import viewsets, status
 from rest_framework.authtoken.models import Token
+from django.utils.crypto import get_random_string
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, get_user_model
 from django.urls import reverse_lazy
 from django.views import generic
 from user.serializers import  UserDetailSerializer,UserSerializer,ContactUsSerializer,TeamSerializer,UserTeamSerializer,RequestTeamSerializer
-from user.models import  UserDetail, ConfirmCode,User,ContactUs,Team,UserTeam,RequestTeam
+from user.models import  UserDetail, ConfirmCode,User,ContactUs,Team,UserTeam,RequestTeam,RecoverEmail
 from datetime import datetime, timedelta
 import random
 import pytz
@@ -266,6 +267,44 @@ def register_user(request):
       return Response({'message':"Confirmation code is incorrect."},status=status.HTTP_400_BAD_REQUEST)
   else:
     return Response(errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+def recover_email(request):
+  email = request.data['email'].strip()
+  # errors = []
+  user = User.objects.filter(email=email)
+  if user.count() == 1:
+    old_tokens = RecoverEmail.objects.filter(email=email)
+    if old_tokens.count() > 0:
+      old_tokens.delete()
+    token = get_random_string(length=32)
+    send_email('Վերականգնման կոդը', f'{email}',f'{token}')
+    recover = RecoverEmail(email=email,token=token)
+    recover.save()
+    return Response({"message":"Recovered token created.",
+                     "token": token,}, status = status.HTTP_201_CREATED)
+  else:
+    return Response({"message":"No email"},status = status.HTTP_400_BAD_REQUEST)
+
+# @api_view(['POST'])
+# def recover_password(request):
+#   email = request.data['email'].strip()
+#   token = request.data['token'].strip()
+#   password = request.data['password'].strip()
+#   recover_email  = RecoverEmail.objects.filter(email=email,token=token)
+#   if recover_email.count() > 0:
+#     user = User.objects.filter(email=email)
+#     print("--------------------------")
+#     user.password=password
+#     print(user.password)
+#     user.update(password=password)
+#     return Response({"message": "Password is changed.",}, status=status.HTTP_201_CREATED)
+#   else:
+#     return Response({"message": "Email or token wrong"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
 @api_view(['PATCH'])
 @permission_classes([IsAuthenticated])
 def update_profile(request):
