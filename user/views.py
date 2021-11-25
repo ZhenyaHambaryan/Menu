@@ -268,21 +268,19 @@ def register_user(request):
   else:
     return Response(errors, status=status.HTTP_400_BAD_REQUEST)
 
-# @api_view(['POST'])
-# @permission_classes([IsAuthenticated])
-# def change_password(request):
-#   old_password = request.data['old_password'].strip()
-#   new_password = request.data['new_password'].strip()
-#   user=request.user
-#   if user.password==old_password:
-#     user.set_password(new_password)
-#     user.save()
-#   else:
-#     return Response({"message": "Password is not changed.", }, status=status.HTTP_400_BAD_REQUEST)
-#   return Response({"message": "Password is changed.",}, status=status.HTTP_201_CREATED)
-
-
-
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def change_password(request):
+  old_password = request.data['old_password'].strip()
+  new_password = request.data['new_password'].strip()
+  user=request.user
+  if user.check_password(old_password)==True:
+    print(user.password)
+    user.set_password(new_password)
+    user.save()
+  else:
+    return Response({"message": "Old password is wrong.", }, status=status.HTTP_400_BAD_REQUEST)
+  return Response({"message": "Password is changed."}, status=status.HTTP_201_CREATED)
 
 
 
