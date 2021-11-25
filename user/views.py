@@ -131,22 +131,22 @@ def user_login(request):
   if user is None or not user.is_active:
     return Response({"message":"Incorrect username or password"}, status=status.HTTP_400_BAD_REQUEST)
 
-  try:
+  # try:
     print(1)
-    if role == "MST":
-      userDetails = UserDetail.objects.get(user=user, is_master = True)
-    else: #role == "CL"
-      userDetails = UserDetail.objects.get(user=user, is_client = True)
-    if not userDetails.user.is_active:
-      return Response({"message":"User is removed."},status=status.HTTP_400_BAD_REQUEST)
-    else:
-      refresh = RefreshToken.for_user(user)
-      return Response({
-        'refresh': str(refresh),
-        'access': str(refresh.access_token),
-        "user":UserDetailSerializer(userDetails).data
-      },status=status.HTTP_200_OK)
-  except:
+  if role == "MST":
+    userDetails = UserDetail.objects.get(user=user, is_master = True)
+  else: #role == "CL"
+    userDetails = UserDetail.objects.get(user=user, is_client = True)
+  if not userDetails.user.is_active:
+    return Response({"message":"User is removed."},status=status.HTTP_400_BAD_REQUEST)
+  else:
+    refresh = RefreshToken.for_user(user)
+    return Response({
+      'refresh': str(refresh),
+      'access': str(refresh.access_token),
+      "user":UserDetailSerializer(userDetails).data
+    },status=status.HTTP_200_OK)
+  # except:
     return Response({"message":"Incorrect username or password"}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
@@ -268,17 +268,34 @@ def register_user(request):
   else:
     return Response(errors, status=status.HTTP_400_BAD_REQUEST)
 
+# @api_view(['POST'])
+# @permission_classes([IsAuthenticated])
+# def change_password(request):
+#   old_password = request.data['old_password'].strip()
+#   new_password = request.data['new_password'].strip()
+#   user=request.user
+#   if user.password==old_password:
+#     user.set_password(new_password)
+#     user.save()
+#   else:
+#     return Response({"message": "Password is not changed.", }, status=status.HTTP_400_BAD_REQUEST)
+#   return Response({"message": "Password is changed.",}, status=status.HTTP_201_CREATED)
+
+
+
+
+
+
 @api_view(['POST'])
 def recover_email(request):
   email = request.data['email'].strip()
-  # errors = []
   user = User.objects.filter(email=email)
   if user.count() == 1:
     old_tokens = RecoverEmail.objects.filter(email=email)
     if old_tokens.count() > 0:
       old_tokens.delete()
     token = get_random_string(length=32)
-    send_email('Վերականգնման կոդը', f'{email}',f'{token}')
+    send_email('Վերականգնման կոդը', f'{email}',f'localhost:8000/forget-password/{token}')
     recover = RecoverEmail(email=email,token=token)
     recover.save()
     return Response({"message":"Recovered token created.",
@@ -286,21 +303,22 @@ def recover_email(request):
   else:
     return Response({"message":"No email"},status = status.HTTP_400_BAD_REQUEST)
 
-# @api_view(['POST'])
-# def recover_password(request):
-#   email = request.data['email'].strip()
-#   token = request.data['token'].strip()
-#   password = request.data['password'].strip()
-#   recover_email  = RecoverEmail.objects.filter(email=email,token=token)
-#   if recover_email.count() > 0:
-#     user = User.objects.filter(email=email)
-#     print("--------------------------")
-#     user.password=password
-#     print(user.password)
-#     user.update(password=password)
-#     return Response({"message": "Password is changed.",}, status=status.HTTP_201_CREATED)
-#   else:
-#     return Response({"message": "Email or token wrong"}, status=status.HTTP_400_BAD_REQUEST)
+@api_view(['POST'])
+def recover_password(request):
+  email = request.data['email'].strip()
+  token = request.data['token'].strip()
+  password = request.data['password'].strip()
+  recover_email  = RecoverEmail.objects.filter(email=email,token=token)
+  if recover_email.count() > 0:
+    db_token = RecoverEmail.objects.get(token=token)
+    if (db_token.created_at + conf_lifespan < datetime.now().replace(tzinfo=pytz.UTC)):
+      return Response({'message': "Recovered token has expired."}, status=status.HTTP_400_BAD_REQUEST)
+    user = User.objects.get(email=email)
+    user.set_password(password)
+    user.save()
+    return Response({"message": "Password is changed.",}, status=status.HTTP_201_CREATED)
+  else:
+    return Response({"message": "Email or token wrong"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 
