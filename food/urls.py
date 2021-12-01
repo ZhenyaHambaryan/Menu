@@ -279,6 +279,8 @@ urlpatterns = [
     path('filtered_drinks/', views.filtered_drinks, name='filtered_drinks'),
     path('filtered_desserts/', views.filtered_desserts, name='filtered_desserts'),
     path('filtered_all/', views.filtered_all, name='filtered_all'),
+    path('statistic/', views.statistic, name='statistic'),
+
 
     # testing petk uni:
 

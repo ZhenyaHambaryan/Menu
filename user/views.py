@@ -10,8 +10,8 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, get_user_model
 from django.urls import reverse_lazy
 from django.views import generic
-from user.serializers import  UserDetailSerializer,UserSerializer,ContactUsSerializer,TeamSerializer,UserTeamSerializer,RequestTeamSerializer
-from user.models import  UserDetail, ConfirmCode,User,ContactUs,Team,UserTeam,RequestTeam,RecoverEmail
+from user.serializers import  UserDetailSerializer,UserSerializer,TeamSerializer,UserTeamSerializer,RequestTeamSerializer
+from user.models import  UserDetail, ConfirmCode,User,Team,UserTeam,RequestTeam,RecoverEmail
 from datetime import datetime, timedelta
 import random
 import pytz
@@ -46,9 +46,6 @@ class UserTeamViewSet(viewsets.ModelViewSet):
   queryset = UserTeam.objects.all()
   serializer_class = UserTeamSerializer
 
-class ContactUsViewSet(viewsets.ModelViewSet):
-  queryset = ContactUs.objects.all()
-  serializer_class = ContactUsSerializer
 
 class UserDetailViewSet(viewsets.ModelViewSet):
   queryset = UserDetail.objects.all()

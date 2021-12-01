@@ -75,15 +75,6 @@ class UserTeam(models.Model):
 
 
 
-
-class ContactUs(models.Model):
-  name = models.CharField(null=True,blank=True,max_length=255)
-  phone_number = models.CharField(null=True,blank=True,max_length=255)
-  email = models.CharField(null=True,blank=True,max_length=255)
-  subject =  models.CharField(null=True,blank=True,max_length=1000)
-  message =  models.CharField(null=True,blank=True,max_length=1000)
-
-
 class ConfirmCode(models.Model):
   code = models.CharField(max_length=255, blank=False, null=False, primary_key=True)
   # phone_number = models.CharField(null=True,blank=True,max_length=255)

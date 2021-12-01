@@ -1,7 +1,7 @@
 from django.urls import path
 from user import views
 from rest_framework.urlpatterns import format_suffix_patterns
-from .views import UserDetailViewSet, SignUpView,ContactUsViewSet,TeamViewSet,UserTeamViewSet,RequestTeamViewSet
+from .views import UserDetailViewSet, SignUpView,TeamViewSet,UserTeamViewSet,RequestTeamViewSet
 from django.views.generic.base import TemplateView
 from rest_framework_jwt.views import obtain_jwt_token, refresh_jwt_token, verify_jwt_token
 from rest_framework_simplejwt.views import (
@@ -60,17 +60,6 @@ request_team_detail = RequestTeamViewSet.as_view({
     'delete': 'destroy'
 })
 
-contact_us_list = ContactUsViewSet.as_view({
-    'get': 'list',
-    'post': 'create'
-})
-
-contact_us_detail = ContactUsViewSet.as_view({
-    'get': 'retrieve',
-    'put': 'update',
-    'patch': 'partial_update',
-    'delete': 'destroy'
-})
 # city_list = CityViewSet.as_view({
 #     'get': 'list',
 #     'post': 'create'
@@ -96,8 +85,7 @@ urlpatterns = [
     path('request_team/<int:pk>/', request_team_detail, name='request-team-detail'),
     path('user_team/', user_team_list, name='user-team-list'),
     path('user_team/<int:pk>/', user_team_detail, name='user-team-detail'),
-    path('contact_us/', contact_us_list, name='contact-us-list-list'),
-    path('contact_us/<int:pk>/', contact_us_detail, name='contact-us-detail'),
+
     # path('city/', city_list, name='city-list'),
     # path('city/<int:pk>/', city_detail, name='city-detail'),
 

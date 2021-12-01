@@ -17,6 +17,11 @@ from rest_framework.filters import SearchFilter
 from django_filters import rest_framework as filters
 from rest_framework.pagination import PageNumberPagination
 from django.db.models import Sum,F
+from datetime import datetime, date, timedelta
+
+
+
+
 
 class TimeIntervalViewSet(viewsets.ModelViewSet):
   queryset = TimeInterval.objects.all()
@@ -193,6 +198,39 @@ class SubscribeViewSet(viewsets.ModelViewSet):
                                  plate__days_plate__day__lte=to_date)
     return queryset
 
+
+@api_view(['GET'])
+def statistic(request):
+  # day = request.GET.get("day")
+  from_date = request.GET.get("from_date")
+  to_date = request.GET.get("to_date")
+  date1 = datetime.strptime(str(from_date), '%Y-%m-%d').date()
+  date2 = datetime.strptime(str(to_date), '%Y-%m-%d').date()
+  date = (date2-date1)
+  subscribes = Subscribe.objects.filter(plate__days_plate__day__gte=from_date,
+                                 plate__days_plate__day__lte=to_date)
+  all = []
+
+  for i in range(date.days + 1):
+    day = date1 + timedelta(days=i)
+    subscribe = subscribes.filter(plate__days_plate__day=day).distinct()
+    obj = {
+      "date":day,
+      "subscribes_count":subscribe.count(),
+      "price_sum":subscribe.aggregate(sum=Sum('price'))['sum']
+    }
+
+    all.append(obj)
+
+  return Response(all)
+  # print(date )
+  # subscribe = Subscribe.objects.filter(plate__days_plate__day__gte=from_date,
+  #                                plate__days_plate__day__lte=to_date)
+  # subscribes=[]
+  # for i in subscribe:
+  #   subscribes.append(SubscribeSerializer(i).data)
+  #  return Response({"day":day,
+  #                  "subscribe":SubscribeSerializer(subscribe).data})
 
 @api_view(['GET'])
 def filtered_all(request):
