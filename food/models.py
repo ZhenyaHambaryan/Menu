@@ -141,6 +141,8 @@ class Subscribe(models.Model):
   address_latitude = models.CharField(null=True,blank=True,max_length=255)
   comment = models.CharField(null=True,blank=True,max_length=1000)
   price = models.FloatField(null=True, blank=True, default=0.0)
+  created_at = models.DateField(auto_now_add=True)
+
 
 class TimeInterval(models.Model):
   start_time = models.TimeField(auto_now=False, auto_now_add=False)

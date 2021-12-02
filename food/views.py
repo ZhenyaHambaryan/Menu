@@ -207,30 +207,22 @@ def statistic(request):
   date1 = datetime.strptime(str(from_date), '%Y-%m-%d').date()
   date2 = datetime.strptime(str(to_date), '%Y-%m-%d').date()
   date = (date2-date1)
-  subscribes = Subscribe.objects.filter(plate__days_plate__day__gte=from_date,
-                                 plate__days_plate__day__lte=to_date)
-  all = []
+  subscribes = Subscribe.objects.filter(created_at__gte=from_date,
+                                 created_at__lte=to_date)
 
+  all = []
   for i in range(date.days + 1):
     day = date1 + timedelta(days=i)
-    subscribe = subscribes.filter(plate__days_plate__day=day).distinct()
+    subscribe = subscribes.filter(created_at=day).distinct()
     obj = {
       "date":day,
       "subscribes_count":subscribe.count(),
       "price_sum":subscribe.aggregate(sum=Sum('price'))['sum']
     }
-
     all.append(obj)
-
   return Response(all)
-  # print(date )
-  # subscribe = Subscribe.objects.filter(plate__days_plate__day__gte=from_date,
-  #                                plate__days_plate__day__lte=to_date)
-  # subscribes=[]
-  # for i in subscribe:
-  #   subscribes.append(SubscribeSerializer(i).data)
-  #  return Response({"day":day,
-  #                  "subscribe":SubscribeSerializer(subscribe).data})
+
+
 
 @api_view(['GET'])
 def filtered_all(request):
