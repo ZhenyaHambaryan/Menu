@@ -136,7 +136,7 @@ EMAIL_FROM = "beatycoreemail@gmail.com"
 #         'OPTIONS': {}
 #     }
 # }
-#
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
