@@ -308,17 +308,17 @@ def filtered_all(request):
     result.append({"plate":{"id":plate.id},"filtered_foods":filtered_foods,"filtered_drinks":filtered_drinks,"filtered_desserts":filtered_desserts})
 
     for plate in result:
-      # for section in plate['sections']:
-        if len(section['filtered_foods']) >1:
-          filtered_foods = []
-          for food in section['filtered_foods']:
-            if food['food']['id'] in choosed_foods:
-              filtered_foods.append(food)
-              break
-          if len(filtered_foods)==0:
-            filtered_foods.append(section['filtered_foods'][0])
-            choosed_foods.append(filtered_foods[0]['food']['id'])
-        section['filtered_foods'] = filtered_foods
+    # for section in plate['sections']:
+      if len(section['filtered_foods']) >1:
+        filtered_foods = []
+        for food in section['filtered_foods']:
+          if food['food']['id'] in choosed_foods:
+            filtered_foods.append(food)
+            break
+        if len(filtered_foods)==0:
+          filtered_foods.append(section['filtered_foods'][0])
+          choosed_foods.append(filtered_foods[0]['food']['id'])
+      section['filtered_foods'] = filtered_foods
 
     for drinks in result:
       if len(drinks["filtered_drinks"]) > 1:
