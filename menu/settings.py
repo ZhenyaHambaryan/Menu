@@ -125,29 +125,29 @@ EMAIL_FROM = "beatycoreemail@gmail.com"
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 #
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'menu',
-        'USER':'annaniks',
-        'PASSWORD':'annaniks',
-        'HOST':'localhost',
-        'PORT':'3306',
-        'OPTIONS': {}
-    }
-}
-
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.mysql',
 #         'NAME': 'menu',
-#         'USER':'user1',
-#         'PASSWORD':'user1',
-#         'HOST':'46.101.179.50',
+#         'USER':'annaniks',
+#         'PASSWORD':'annaniks',
+#         'HOST':'localhost',
 #         'PORT':'3306',
 #         'OPTIONS': {}
 #     }
 # }
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'menu',
+        'USER':'user1',
+        'PASSWORD':'user1',
+        'HOST':'46.101.179.50',
+        'PORT':'3306',
+        'OPTIONS': {}
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
