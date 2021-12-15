@@ -1,15 +1,11 @@
 from django.db.models import fields
 from food.models import Food, FoodType, FoodCategory, PlateSection, PlateLayout, Plate,Ingredients,Subscribe,\
-                        SectionLayout,Box,PlateDrink,PlateDessert,PlateFood,PlateDays,Transaction,RequestToCancel,Take,TimeInterval
+                        SectionLayout,Box,PlateDrink,PlateDessert,PlateFood,PlateDays,Transaction,RequestToCancel,Take
 from user.serializers import UserDetailSerializer
 from rest_framework import serializers
 from django.contrib.auth.models import User
 import sys,json
 
-class TimeIntervalSerializer(serializers.ModelSerializer):
-  class Meta:
-    model = TimeInterval
-    fields = '__all__'
 
 class TakeSerializer(serializers.ModelSerializer):
   class Meta:

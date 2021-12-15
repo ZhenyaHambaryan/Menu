@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 # from user.models import City
 from django.db.models.base import Model
 from django.db.models.deletion import CASCADE, PROTECT, SET_NULL
+from utils.models import Images
 
 
 
@@ -144,10 +145,6 @@ class Subscribe(models.Model):
   created_at = models.DateField(auto_now_add=True)
 
 
-class TimeInterval(models.Model):
-  start_time = models.TimeField(auto_now=False, auto_now_add=False)
-  end_time =models.TimeField(auto_now=False, auto_now_add=False)
-
 
 class Transaction(models.Model):
   amount = models.FloatField(null=True)
@@ -177,20 +174,17 @@ class Take(models.Model):
   date =  models.DateField()
 
 
-
 class Box(models.Model):
   name = models.TextField(null=False, blank=False)
   description = models.TextField(null=False, blank=False)
   image = models.ImageField(upload_to='uploads/', null=True, blank=True)
-  user = models.ForeignKey(User,null=True,blank=True,on_delete=CASCADE)
+  images = models.ManyToManyField(Images, blank=True, related_name="box_images")
   layout = models.ForeignKey(PlateLayout, on_delete=models.CASCADE, null=True,
                      blank=True, related_name="layout_box")#DEBUG: redundant?
   # section_food = models.ManyToManyField(SectionFood, blank=True)
-  # foods = models.ManyToManyField(Food, blank=True)
+  foods = models.ManyToManyField(Food, blank=True, related_name="box_food")
   drink =  models.ManyToManyField(Food, blank=True, related_name="box_drink")
   dessert =  models.ManyToManyField(Food, blank=True, related_name="box_dessert")
-  has_drink = models.BooleanField(default=True)
-  has_dessert = models.BooleanField(default=True)
 
   # @property
   # def price(self):

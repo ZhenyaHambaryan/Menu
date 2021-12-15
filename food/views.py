@@ -8,10 +8,10 @@ from rest_framework import viewsets, status
 from rest_framework.authtoken.models import Token
 from rest_framework.reverse import reverse
 from food.serializers import FoodSerializer, FoodTypeSerializer, FoodCategorySerializer, PlateSectionSerializer,TransactionSerializer,TakeSerializer, \
-                              PlateLayoutSerializer, PlateSerializer,IngredientsSerializer,SubscribeSerializer,RequestToCancelSerializer,TimeIntervalSerializer,\
-                              SectionLayoutSerializer,BoxSerializer,PlateDrinkSerializer,PlateDessertSerializer,PlateFoodSerializer,PlateDaysSerializer,SectionLayoutFullSerializer
+                              PlateLayoutSerializer, PlateSerializer,IngredientsSerializer,SubscribeSerializer,RequestToCancelSerializer,SectionLayoutSerializer,\
+                              BoxSerializer,PlateDrinkSerializer,PlateDessertSerializer,PlateFoodSerializer,PlateDaysSerializer,SectionLayoutFullSerializer
 from food.models import Food, FoodType, FoodCategory, PlateSection, PlateLayout, Plate,Ingredients,Subscribe,\
-                        SectionLayout,Box,PlateDrink,PlateDessert,PlateFood,PlateDays,Transaction,RequestToCancel,Take,TimeInterval
+                        SectionLayout,Box,PlateDrink,PlateDessert,PlateFood,PlateDays,Transaction,RequestToCancel,Take
 # import django_filters
 from rest_framework.filters import SearchFilter
 from django_filters import rest_framework as filters
@@ -19,13 +19,6 @@ from rest_framework.pagination import PageNumberPagination
 from django.db.models import Sum,F
 from datetime import datetime, date, timedelta
 
-
-
-
-
-class TimeIntervalViewSet(viewsets.ModelViewSet):
-  queryset = TimeInterval.objects.all()
-  serializer_class = TimeIntervalSerializer
 
 
 class TakeViewSet(viewsets.ModelViewSet):
